@@ -4,45 +4,72 @@ import errorHandler from '@/lib/error-handler';
 
 import { AppStore } from '@/services/index';
 
-import { getCopyStatus, startCopyTrader, stopCopyTrader } from './trade.api';
+import {
+  getCopyStatus,
+  getCopyTraderAccount,
+  startCopyTrader,
+  stopCopyTrader,
+} from './trade.api';
+
+export type CopyStatusInfo = {
+  id: number;
+  from: string;
+  to: string;
+  collateral_ratio: number;
+  leverage_ratio: number;
+  from_timestamp: string;
+  to_timestamp: string;
+};
 
 export type TradeStore = {
+  isFetching: boolean;
+  isStarting: boolean;
+  isStoping: boolean;
   copyStatus: {
-    copy: boolean;
-    leader: {
-      from: string;
-      collateral_ratio: number;
-      leverage_ratio: number;
-    };
+    isCopyTrading: boolean;
+    message: string;
+    info?: CopyStatusInfo;
+  };
+  copyTraderAccount: {
+    message: string;
+    copyAccount: string;
   };
   leader: string;
   collateral_ratio: number;
   leverage_ratio: number;
   collateral_limit_eth: string;
-  busy: boolean;
-  seed: number;
 };
 
 const initialState: TradeStore = {
+  isFetching: false,
+  isStarting: false,
+  isStoping: false,
   copyStatus: {
-    copy: false,
-    leader: {
+    isCopyTrading: false,
+    message: '',
+    info: {
+      id: 0,
       from: '',
-      collateral_ratio: 0,
-      leverage_ratio: 1.2,
+      to: '',
+      collateral_ratio: 1,
+      leverage_ratio: 1,
+      from_timestamp: '',
+      to_timestamp: '',
     },
   },
+  copyTraderAccount: {
+    message: '',
+    copyAccount: '',
+  },
   leader: '',
-  collateral_ratio: 0,
-  leverage_ratio: 1.2,
+  collateral_ratio: 1,
+  leverage_ratio: 1,
   collateral_limit_eth: '10000000000000000',
-  busy: false,
-  seed: 0,
 };
 
 export const getCopyStatusAsync = createAsyncThunk(
   'trade/getCopyStatus',
-  errorHandler(getCopyStatus)
+  getCopyStatus
 );
 
 export const startCopyTraderAsync = createAsyncThunk(
@@ -55,10 +82,18 @@ export const stopCopyTraderAsync = createAsyncThunk(
   errorHandler(stopCopyTrader)
 );
 
+export const getCopyTraderAccountAsync = createAsyncThunk(
+  'trade/getCopyTraderAccount',
+  getCopyTraderAccount
+);
+
 const tradeSlice = createSlice({
   name: 'trade',
   initialState,
   reducers: {
+    setCopyAccount: (state, action) => {
+      state.copyTraderAccount.copyAccount = action.payload;
+    },
     setLeader: (state, action) => {
       state.leader = action.payload;
     },
@@ -72,39 +107,52 @@ const tradeSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getCopyStatusAsync.pending, (state) => {
-        state.busy = true;
+        state.isFetching = true;
       })
       .addCase(getCopyStatusAsync.rejected, (state) => {
-        state.busy = false;
+        state.isFetching = false;
       })
       .addCase(getCopyStatusAsync.fulfilled, (state, action) => {
-        state.busy = false;
-        Object.assign(state, action.payload.data);
+        state.isFetching = false;
+        Object.assign(state.copyStatus, action.payload);
+      })
+      .addCase(getCopyTraderAccountAsync.pending, (state) => {
+        state.isFetching = true;
+      })
+      .addCase(getCopyTraderAccountAsync.rejected, (state) => {
+        state.isFetching = false;
+      })
+      .addCase(getCopyTraderAccountAsync.fulfilled, (state, action) => {
+        state.isFetching = false;
+        Object.assign(state.copyTraderAccount, action.payload);
       })
       .addCase(startCopyTraderAsync.pending, (state) => {
-        state.busy = true;
+        state.isStarting = true;
       })
       .addCase(startCopyTraderAsync.rejected, (state) => {
-        state.busy = false;
+        state.isStarting = false;
       })
       .addCase(startCopyTraderAsync.fulfilled, (state) => {
-        state.busy = false;
+        state.isStarting = false;
       })
-
       .addCase(stopCopyTraderAsync.pending, (state) => {
-        state.busy = true;
+        state.isStoping = true;
       })
       .addCase(stopCopyTraderAsync.rejected, (state) => {
-        state.busy = false;
+        state.isStoping = false;
       })
       .addCase(stopCopyTraderAsync.fulfilled, (state) => {
-        state.busy = false;
+        state.isStoping = false;
       });
   },
 });
 
-export const { setLeader, setCollateralRatio, setLeverageRatio } =
-  tradeSlice.actions;
+export const {
+  setLeader,
+  setCopyAccount,
+  setCollateralRatio,
+  setLeverageRatio,
+} = tradeSlice.actions;
 
 export const selectTradeDetail = (state: AppStore) => state.trade;
 

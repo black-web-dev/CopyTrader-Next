@@ -1,11 +1,10 @@
 import React, { ReactNode } from 'react';
-
 import { BiMoneyWithdraw, BiUserPin } from 'react-icons/bi';
 import { FaCoins } from 'react-icons/fa';
 
 export const MENUS = [
   {
-    href: '/',
+    href: '/dashboard',
     label: 'dashboard',
   },
   {
@@ -15,10 +14,6 @@ export const MENUS = [
   {
     href: '/trade',
     label: 'trade',
-  },
-  {
-    href: '/leaderboard',
-    label: 'leaderboard',
   },
   {
     href: '/referral',
@@ -37,7 +32,7 @@ export type ExchangeTabType = {
 
 export const ExchangeTabs: ExchangeTabType[] = [
   {
-    label: 'copy',
+    label: 'trade',
     icon: <BiUserPin />,
   },
   {

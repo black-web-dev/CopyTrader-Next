@@ -19,16 +19,17 @@ const Item = ({
   children,
 }: ItemType): JSX.Element => (
   <span
-    className={`${className} relative inline-flex items-center ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0 
+    className={`${className} ring-border-100 relative inline-flex items-center ring-1 ring-inset focus:z-20 focus:outline-offset-0 
       ${
         selected
-          ? 'cursor-default bg-blue-500 text-white'
+          ? 'bg-primary-100 cursor-default text-white'
           : disabled
           ? 'cursor-not-allowed'
-          : 'cursor-pointer hover:bg-gray-300 hover:text-black'
+          : 'hover:bg-primary-100/50 cursor-pointer hover:text-white'
       }
     `}
-    onClick={onClick}
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    onClick={!disabled ? onClick : () => {}}
   >
     {children}
   </span>
@@ -73,7 +74,7 @@ export const Pagination = ({
 
   return (
     <nav
-      className='text-text-100 isolate inline-flex -space-x-px rounded text-[0.8em] shadow sm:text-[1em]'
+      className='text-text-100 isolate inline-flex -space-x-px rounded text-xs shadow'
       aria-label='Pagination'
     >
       {/* Left navigation arrow */}

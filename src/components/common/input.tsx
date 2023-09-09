@@ -16,7 +16,7 @@ const Input = (props: InputProps): JSX.Element => {
       )}
       <div className='flex items-center'>
         <input
-          className='text-text-200 focus:shadow-inputFocus block w-full rounded border-0 bg-white/5 px-2 py-1.5 focus:outline-0 sm:text-sm sm:leading-6'
+          className='text-text-200 focus:shadow-inputFocus block w-full rounded border-0 bg-white/5 px-2 py-1.5 focus:outline-0 focus:ring-0 sm:text-sm sm:leading-6'
           {...props}
         />
         {props.afterPrefix && (

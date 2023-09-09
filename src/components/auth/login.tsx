@@ -1,30 +1,47 @@
 import Link from 'next/link';
-import React from 'react';
+import React, { useRef } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 
 import useNotification from '@/hooks/useNotification';
 
 import { useAppDispatch } from '@/services';
 import { signinAsync } from '@/services/auth';
+import { verifyToken } from '@/utils';
 
-import Loader from '../common/loader';
+import Button from '../common/button';
 
 import Logo from '~/svg/logo_footer.svg';
 
 const Login = (): JSX.Element => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
-  const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+
+  const captchaRef = useRef(null);
+  const [captchaToken, setCaptchaToken] = React.useState(null);
+  const [captchaSuccess, setCaptchaSuccess] = React.useState<boolean>(true);
 
   const dispatch = useAppDispatch();
   const notification = useNotification();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (loading) return;
 
+    if (captchaToken) {
+      const valid_token = await verifyToken(captchaToken);
+
+      if (!valid_token.success) {
+        setCaptchaSuccess(false);
+        return notification('Sorry!! Token invalid', 'error');
+      }
+    } else {
+      setCaptchaSuccess(false);
+      return notification('You must confirm you are not a robot', 'error');
+    }
+
+    setCaptchaSuccess(true);
     setLoading(true);
 
     dispatch(signinAsync({ email, password })).then((payload: any) => {
@@ -35,7 +52,8 @@ const Login = (): JSX.Element => {
   };
 
   const onChange = (value: any) => {
-    console.log('Captcha value:', value);
+    setCaptchaToken(value);
+    setCaptchaSuccess(true);
   };
 
   return (
@@ -90,27 +108,29 @@ const Login = (): JSX.Element => {
                 value={password}
               />
             </div>
-            {error && (
-              <div className='mt-2 text-sm text-red-500'>
-                Wrong username or password
+          </div>
+
+          <div className='min-h-[78px]'>
+            <ReCAPTCHA
+              ref={captchaRef}
+              theme='dark'
+              sitekey={
+                process.env.NEXT_RECAPTHA_SITE_KEY ||
+                '6Lfw-OwnAAAAAGX-xmkDjjiMSjS-kfOGjIVWEbam'
+              }
+              onChange={onChange}
+            />
+            {!captchaSuccess && (
+              <div className='text-xs text-red-500'>
+                You must confirm you are not a robot
               </div>
             )}
           </div>
 
-          <ReCAPTCHA
-            theme='dark'
-            sitekey='6LccB50nAAAAAAqDGiFHwnBnVpf9OUDUO4Fez6jK'
-            onChange={onChange}
-          />
-
           <div>
-            <button
-              type='submit'
-              className='bg-primary-100 hover:bg-primary-100/50 flex w-full items-center justify-center gap-2 rounded px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 active:scale-95'
-              disabled={loading}
-            >
-              {loading && <Loader />}Sign in
-            </button>
+            <Button type='submit' disabled={loading} loading={loading}>
+              Sign in
+            </Button>
           </div>
           <Link
             href='/account/register'

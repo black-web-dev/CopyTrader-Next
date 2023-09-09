@@ -1,116 +1,270 @@
-import React, { ChangeEvent, useState } from 'react';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
+import BigNumber from 'bignumber.js';
+import Link from 'next/link';
+import numeral from 'numeral';
+import React, { useCallback, useState } from 'react';
+import { BiLinkExternal } from 'react-icons/bi';
 import { useSelector } from 'react-redux';
+import { parseEther } from 'viem';
+import {
+  useAccount,
+  useBalance,
+  useContractRead,
+  useContractWrite,
+} from 'wagmi';
 
-import { selectBalance } from '@/services/balance';
 import useNotification from '@/hooks/useNotification';
-import Axios from '@/services/axios';
-import Input from '@/components/common/input';
-import { formatNum } from '@/utils';
+
+import Button from '@/components/common/button';
+import Copy from '@/components/common/copy';
 import Loader from '@/components/common/loader';
 
-const Withdraw = () => {
+import { COPY_TRADER_ACCOUNT } from '@/configs';
+import { useAppDispatch } from '@/services';
+import { selectUserdata } from '@/services/auth';
+import {
+  getCopyStatusAsync,
+  selectTradeDetail,
+  stopCopyTraderAsync,
+} from '@/services/trade';
+import { classNames, shortAddress } from '@/utils';
+
+const Withdraw = (): JSX.Element => {
   const notification = useNotification();
-  const [address, setAddress] = useState<string>('');
-  const [amount, setAmount] = useState<number>(0);
-  const [password, setPassword] = useState<string>('');
+  const dispatch = useAppDispatch();
+  const { address, isConnected } = useAccount();
+  const { openConnectModal } = useConnectModal();
+  const user = useSelector(selectUserdata);
+  const tradeDetail = useSelector(selectTradeDetail);
 
-  const [loading, setLoading] = useState<boolean>(false);
+  const [withdrawAmount, setWithdrawAmount] = useState<BigNumber>(BigNumber(0));
 
-  const balance = useSelector(selectBalance);
+  // Get balance of copyTrader account
+  const {
+    data: contractBalance,
+    isError: isFetchBalanceError,
+    isLoading: isFetchBalanceLoading,
+    refetch: refetchContractBalance,
+  } = useBalance({
+    address: tradeDetail.copyTraderAccount.copyAccount as `0x${string}`,
+    enabled: !!tradeDetail.copyTraderAccount.copyAccount,
+    watch: true,
+  });
 
-  const handleWithdraw = () => {
-    if (loading || balance - amount < 0.0005) {
-      notification('No Balance', 'error');
-      return;
-    }
-    if (!address) {
-      notification('Please input address', 'error');
-      return;
-    }
-    if (!password) {
-      notification('Please input password', 'error');
-      return;
-    }
-    if (!amount) {
-      notification('Please input amount', 'error');
-      return;
-    }
+  // Get owner wallet address of copyTrader account
+  const { data: withdrawAddress } = useContractRead({
+    address: tradeDetail.copyTraderAccount.copyAccount as `0x${string}`,
+    abi: COPY_TRADER_ACCOUNT.abi,
+    functionName: 'owner',
+  });
 
-    setLoading(true);
-    Axios.post('/api/copy/withdraw_eth', {
-      password,
-      to_address: address,
-      amount,
-    })
-      .then(() => notification('Done Successfully', 'success'))
-      .catch((err) =>
-        notification(
-          err?.response?.data?.message || 'Something went wrong',
-          'error'
-        )
-      )
-      .finally(() => setLoading(false));
+  const { data: isCopyTrading } = useContractRead({
+    address: tradeDetail.copyTraderAccount.copyAccount as `0x${string}`,
+    abi: COPY_TRADER_ACCOUNT.abi,
+    functionName: 'isCopyTrading',
+    enabled: !!tradeDetail.copyTraderAccount.copyAccount,
+    watch: true,
+  });
+
+  const {
+    data: resultWithdraw,
+    writeAsync: withdraw,
+    isLoading: isLoadingWithdraw,
+  } = useContractWrite({
+    address: tradeDetail.copyTraderAccount.copyAccount as `0x${string}`,
+    abi: COPY_TRADER_ACCOUNT.abi,
+    functionName: 'withdrawETH',
+    onSuccess() {
+      refetchContractBalance?.();
+      notification('Confirmed withdraw successfully.', 'success');
+      setWithdrawAmount(BigNumber(0));
+    },
+  });
+
+  const {
+    writeAsync: stopCopyTradingContract,
+    isLoading: isLoadingStopCopyTrading,
+  } = useContractWrite({
+    address: tradeDetail.copyTraderAccount.copyAccount as `0x${string}`,
+    abi: COPY_TRADER_ACCOUNT.abi,
+    functionName: 'stopCopyTrading',
+  });
+
+  const handleMaxAmount = () => {
+    const cAmount = contractBalance?.formatted || '0';
+
+    setWithdrawAmount(BigNumber(cAmount));
   };
+
+  const handleWithdraw = useCallback(() => {
+    if (withdrawAddress && address !== withdrawAddress.toString())
+      return notification('Please check owner address', 'error');
+
+    withdraw({
+      args: [parseEther(withdrawAmount.toString())],
+    }).catch(() => {
+      notification('Canceled Metamask.', 'warning');
+    });
+  }, [address, notification, withdraw, withdrawAddress, withdrawAmount]);
+
+  const handleStopTrade = useCallback(async () => {
+    await stopCopyTradingContract();
+
+    if (tradeDetail.copyStatus.info?.from) {
+      dispatch(
+        stopCopyTraderAsync({
+          user_id: `${user.id}`,
+          wallet: `${address}`,
+          leader_address: tradeDetail.copyStatus.info?.from,
+        })
+      ).then((payload: any) => {
+        if (payload?.error) return;
+        notification('Stop copy trading successfully.', 'success');
+
+        dispatch(
+          getCopyStatusAsync({ user_id: `${user.id}`, wallet: `${address}` })
+        );
+      });
+    }
+  }, [
+    address,
+    dispatch,
+    notification,
+    stopCopyTradingContract,
+    tradeDetail.copyStatus.info?.from,
+    user.id,
+  ]);
 
   return (
     <div className='text-text-100 flex w-full flex-col text-sm'>
       <div className='flex w-full flex-col flex-wrap gap-y-4 py-10'>
-        <div className='flex flex-col gap-y-1 pb-10'>
-          <label className='text-text-100 text-sm capitalize'>
-            Current Balance
-          </label>
-          <div className='from-gradient-100 to-gradient-200 flex items-center rounded bg-gradient-to-r p-2'>
-            <div className='flex-auto'>{formatNum(+balance)}</div>
-            <div>ETH</div>
+        {tradeDetail.copyTraderAccount.copyAccount ? (
+          <>
+            <div className='flex flex-col gap-1'>
+              <label className='text-text-200 text-sm capitalize'>
+                Smart Contract Balance
+              </label>
+              <div className='relative flex items-center rounded bg-white/5 px-3 py-2'>
+                <div className='flex-auto'>
+                  {numeral(contractBalance?.formatted).format('0,0.[00000]')}
+                </div>
+                <div>ETH</div>
+              </div>
+              {isFetchBalanceLoading && (
+                <div className='flex items-center gap-1 text-xs'>
+                  <Loader size='11px' />
+                  <div>Fetching balance from address ...</div>
+                </div>
+              )}
+              {!isFetchBalanceLoading && isFetchBalanceError && (
+                <div className='text-xs text-red-600'>
+                  Fetching balance is failed.
+                </div>
+              )}
+            </div>
+
+            <div className='flex flex-col gap-1'>
+              <label className='text-text-200 text-sm capitalize'>
+                <div>withdraw address</div>
+              </label>
+              <div className='text-text-200 relative flex items-center rounded bg-white/5 px-3 py-2'>
+                <div className='flex-auto'>
+                  {shortAddress(withdrawAddress?.toString() || '')}
+                </div>
+                <Copy toCopy={withdrawAddress?.toString() || ''} />
+              </div>
+              {withdrawAddress && withdrawAddress?.toString() !== address && (
+                <div className='text-xs text-red-600'>
+                  Different withdraw address with owner
+                </div>
+              )}
+            </div>
+
+            <div className='mt-10 flex flex-col gap-1'>
+              <label className='text-text-200 flex items-center justify-between text-sm capitalize'>
+                <div>withdraw amount</div>
+                <div
+                  className='text-primary-100 cursor-pointer'
+                  onClick={handleMaxAmount}
+                >
+                  Max
+                </div>
+              </label>
+              <div className='focus-within:shadow-inputFocus group flex w-full items-center gap-1 rounded bg-white/5 px-3'>
+                <input
+                  type='number'
+                  className='block flex-auto border-0 bg-transparent px-0 py-1.5 text-white focus:outline-0 focus:ring-0 sm:text-sm sm:leading-6'
+                  value={withdrawAmount?.toNumber()}
+                  onChange={(e) => setWithdrawAmount(BigNumber(e.target.value))}
+                />
+                <div>ETH</div>
+              </div>
+              {Number(contractBalance?.formatted) <
+                withdrawAmount?.toNumber() && (
+                <div className='text-xs text-red-500'>
+                  Exceeds withdraw balance
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
+          <div className='text-text-200 text-center'>
+            Please build copy trader account.
           </div>
-        </div>
-        <Input
-          id='address'
-          name='address'
-          label='withdraw address'
-          type='text'
-          autoComplete='address'
-          required
-          className='text-text-200 w-full bg-transparent text-sm focus:outline-none'
-          onChange={(e) => setAddress(e.target.value)}
-          value={address}
-        />
-        <Input
-          id='amount'
-          name='amount'
-          label='amount'
-          type='number'
-          autoComplete='amount'
-          afterPrefix='ETH'
-          required
-          className='text-text-200 w-full bg-transparent text-sm focus:outline-none'
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setAmount(Number(e.target.value))
-          }
-          value={amount}
-        />
-        <Input
-          id='password'
-          name='password'
-          label='password'
-          password='password'
-          type='password'
-          autoComplete='password'
-          required
-          className='text-text-200 w-full bg-transparent text-sm focus:outline-none'
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setPassword(e.target.value)
-          }
-          value={password}
-        />
-        <div className='mt-5 flex flex-col'>
+        )}
+
+        {resultWithdraw && (
+          <div className='flex items-center justify-between'>
+            <div className='text-xs'>Trasanction ID</div>
+            <Link
+              href={`https://arbiscan.io/tx/${resultWithdraw.hash}`}
+              target='_blank'
+            >
+              <div className='text-text-200 flex items-center gap-1 text-xs'>
+                {shortAddress(resultWithdraw.hash, 12)}
+                <BiLinkExternal />
+              </div>
+            </Link>
+          </div>
+        )}
+
+        {(isCopyTrading || tradeDetail.copyStatus.isCopyTrading) && (
+          <div className='text-xs text-red-600'>
+            You can not withdraw from contract. please stop copyTrading on
+            contract
+          </div>
+        )}
+
+        {(isCopyTrading || tradeDetail.copyStatus.isCopyTrading) && (
           <button
-            className='bg-primary-100 hover:bg-hover-200 flex w-full justify-center rounded p-3 text-sm text-white shadow-sm focus-visible:outline-none'
-            disabled={loading}
-            onClick={handleWithdraw}
+            className={classNames(
+              'flex w-full items-center justify-center gap-2 rounded bg-[#2C96C3] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#2C96C3]/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 active:scale-95'
+            )}
+            onClick={handleStopTrade}
           >
-            {loading ? <Loader /> : 'Withdraw'}
+            {(isLoadingStopCopyTrading || tradeDetail.isStoping) && <Loader />}
+            Stop Copy Trading
           </button>
+        )}
+
+        <div className='mt-5'>
+          {isConnected && address ? (
+            <Button
+              disabled={
+                !!isCopyTrading ||
+                tradeDetail.copyStatus.isCopyTrading ||
+                withdrawAmount.toNumber() === 0 ||
+                Number(contractBalance?.value) === 0 ||
+                Number(contractBalance?.formatted) < withdrawAmount.toNumber()
+              }
+              loading={isLoadingWithdraw}
+              onClick={handleWithdraw}
+            >
+              Withdraw
+            </Button>
+          ) : (
+            <Button onClick={openConnectModal}>Connect Wallet</Button>
+          )}
         </div>
       </div>
       <p className='text-xs'>NOTICE: Withdraw selected address and amount.</p>

@@ -8,6 +8,12 @@ export function signinWithToken() {
   });
 }
 
+export function checkEmail({ email }: { email: string }) {
+  return Axios.post('/api/auth/checkemail', {
+    email,
+  });
+}
+
 export function signin({
   email,
   password,
@@ -25,6 +31,7 @@ export function signup({
   twitter_link,
   role,
   password,
+  invite_code,
 }: {
   email: string;
   firstName: string;
@@ -32,6 +39,7 @@ export function signup({
   twitter_link: string;
   role: string;
   password: string;
+  invite_code?: string;
 }) {
   return Axios.post('/api/auth/signup', {
     email,
@@ -40,6 +48,7 @@ export function signup({
     twitter_link,
     role,
     password,
+    invite_code,
   });
 }
 

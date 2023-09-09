@@ -4,7 +4,7 @@ import Logo from '~/svg/logo.svg';
 
 export default function NotFoundPage() {
   return (
-    <div className='flex flex-auto items-center justify-center'>
+    <div className='flex min-h-[calc(100vh_-_64px)] flex-auto items-center justify-center'>
       <div className='flex flex-col'>
         <div className='mb-4 flex items-center justify-between font-semibold text-white'>
           <Logo className='h-[45px] w-[75px]' />

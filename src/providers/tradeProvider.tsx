@@ -66,9 +66,8 @@ const TradeContext = createContext<CTX>({
     averagePrice: 0,
     change: 0,
   },
-  handleSwitchPair: function (pair: PairType): void {
-    throw new Error('Function not implemented.');
-  },
+  // eslint-disable-next-line @typescript-eslint/no-empty-function, unused-imports/no-unused-vars
+  handleSwitchPair: function (pair: PairType): void {},
 });
 
 const TradeProvider = ({ children }: { children: React.ReactNode }) => {
@@ -82,6 +81,7 @@ const TradeProvider = ({ children }: { children: React.ReactNode }) => {
   });
 
   const handleSwitchPair = useCallback((pair: PairType) => {
+    console.log(pair);
     setCurrentPair(pair);
     LocalStorage.set(PAIR_KEY, JSON.stringify(pair));
   }, []);

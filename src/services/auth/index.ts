@@ -5,7 +5,13 @@ import LocalStorage, { ACCESS_TOKEN, USER_ID } from '@/hooks/useStorage';
 
 import { AppStore } from '@/services/index';
 
-import { logout, signin, signinWithToken, signup } from './auth.api';
+import {
+  checkEmail,
+  logout,
+  signin,
+  signinWithToken,
+  signup,
+} from './auth.api';
 
 export type AuthStore = {
   accessToken: string;
@@ -14,6 +20,7 @@ export type AuthStore = {
     firstName: string;
     lastName: string;
     email: string;
+    twitterLink: string;
     role: string;
   };
   status: string;
@@ -26,6 +33,7 @@ const initialState: AuthStore = {
     firstName: '',
     lastName: '',
     email: '',
+    twitterLink: '',
     role: 'user',
   },
   status: 'auth_check',
@@ -34,6 +42,10 @@ const initialState: AuthStore = {
 export const checkAuthAsync = createAsyncThunk(
   'auth/checkAuth',
   errorHandler(signinWithToken)
+);
+export const checkEmailAsync = createAsyncThunk(
+  'auth/checkEmail',
+  errorHandler(checkEmail)
 );
 export const signinAsync = createAsyncThunk(
   'auth/signin',
@@ -108,6 +120,7 @@ const authSlice = createSlice({
           firstName: '',
           lastName: '',
           email: '',
+          twitterLink: '',
           role: 'user',
         };
         LocalStorage.remove(ACCESS_TOKEN);

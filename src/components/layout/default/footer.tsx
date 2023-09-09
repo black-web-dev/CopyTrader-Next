@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import { CiTwitter } from 'react-icons/ci';
@@ -13,7 +12,7 @@ const Footer = () => {
     <div className='bg-back-100 mx-auto flex w-full flex-col items-center justify-center'>
       <div className='border-border-100 flex w-full flex-col items-center justify-center gap-10 border-t py-10'>
         <Link href='/'>
-          <Logo className='h-[50px] w-[180px] mx-auto' />
+          <Logo className='mx-auto h-[50px] w-[180px]' />
         </Link>
         <div className='flex items-center gap-x-10'>
           <a

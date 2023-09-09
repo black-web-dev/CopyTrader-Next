@@ -1,13 +1,14 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 
-import { TradeContext } from '@/providers/tradeProvider';
+import { selectCurrentPair } from '@/services/pair';
 
 let tvScriptLoadingPromise: Promise<void>;
 
 export default function TradingViewWidget(): JSX.Element {
   const onLoadScriptRef = useRef<(() => void) | null>(null);
 
-  const { currentPair } = useContext(TradeContext);
+  const currentPair = useSelector(selectCurrentPair);
 
   useEffect(() => {
     onLoadScriptRef.current = createWidget;

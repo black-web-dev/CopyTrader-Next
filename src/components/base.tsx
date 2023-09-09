@@ -5,7 +5,7 @@ import React from 'react';
 import { Provider as StoreProvider } from 'react-redux';
 import { WagmiConfig } from 'wagmi';
 
-import "@rainbow-me/rainbowkit/styles.css";
+import '@rainbow-me/rainbowkit/styles.css';
 
 import LoadingIndicator from '@/components/common/loadingIndicator';
 import Layout from '@/components/layout';

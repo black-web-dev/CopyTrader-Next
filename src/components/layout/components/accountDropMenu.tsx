@@ -1,7 +1,6 @@
 import { Menu, Transition } from '@headlessui/react';
 import { Chain } from '@rainbow-me/rainbowkit';
 import clsx from 'clsx';
-import Image from 'next/image';
 import Link from 'next/link.js';
 import { useRouter } from 'next/router';
 import React from 'react';

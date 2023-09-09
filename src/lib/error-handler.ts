@@ -50,7 +50,9 @@ export default function errorHandler<Returned, DataParam>(
         if (error.response) {
           // Server error.
           if (error.response.data.message) {
-            if (error.response.data.message === 'Unauthorized') {
+            if (error.response.data.message === 'No token provided!') {
+              console.log(error.response.data.message);
+            } else if (error.response.data.message === 'Unauthorized') {
               eventEmitter.emit('Unauthorized');
             } else {
               eventEmitter.emit('error', error.response.data.message);

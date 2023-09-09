@@ -1,116 +1,31 @@
 import clsx from 'clsx';
-import React from 'react';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { AiOutlineRight } from 'react-icons/ai';
-import { BsLink45Deg } from 'react-icons/bs';
-import { FcGenericSortingAsc, FcGenericSortingDesc } from 'react-icons/fc';
+import { formatDistanceToNow } from 'date-fns';
+import Link from 'next/link';
+import numeral from 'numeral';
+import React, { useEffect } from 'react';
+import { BiLinkExternal } from 'react-icons/bi';
+import { CgSortAz, CgSortZa } from 'react-icons/cg';
+import { useSelector } from 'react-redux';
 
+import Loader from '@/components/common/loader';
 import Pagination from '@/components/common/pagination';
 
-import Axios from '@/services/axios';
+import { useAppDispatch } from '@/services';
+import { selectUserdata } from '@/services/auth';
+import {
+  getTransactionsAsync,
+  selectIsFetchingTransactions,
+  selectLimit,
+  selectOffset,
+  selectSort,
+  selectTransactionData,
+  setOffset,
+  setSort,
+  TransactionType,
+} from '@/services/dashboard';
+import { shortAddress } from '@/utils';
 
-export type TransactionType = {
-  img: string;
-  time: string;
-  from: string;
-  to: string;
-  value: number;
-  token: string;
-  usd: number;
-};
-
-const tempData: TransactionType[] = [
-  {
-    img: 'eth',
-    time: 'just now',
-    from: 'uniswap',
-    to: 'uniswap',
-    value: 0,
-    token: 'eth',
-    usd: 0.5,
-  },
-  {
-    img: 'eth',
-    time: 'just now',
-    from: '0xFd2e8c1a7...',
-    to: 'Binance Dep...',
-    value: 0.001,
-    token: 'weth',
-    usd: 1.01,
-  },
-  {
-    img: 'eth',
-    time: 'just now',
-    from: 'uniswap',
-    to: 'uniswap',
-    value: 0,
-    token: 'eth',
-    usd: 0.5,
-  },
-  {
-    img: 'eth',
-    time: 'just now',
-    from: '0xFd2e8c1a7...',
-    to: 'Binance Dep...',
-    value: 0.001,
-    token: 'weth',
-    usd: 1.01,
-  },
-  {
-    img: 'eth',
-    time: 'just now',
-    from: 'uniswap',
-    to: 'uniswap',
-    value: 0,
-    token: 'eth',
-    usd: 0.5,
-  },
-  {
-    img: 'eth',
-    time: 'just now',
-    from: '0xFd2e8c1a7...',
-    to: 'Binance Dep...',
-    value: 0.001,
-    token: 'weth',
-    usd: 1.01,
-  },
-  {
-    img: 'eth',
-    time: 'just now',
-    from: 'uniswap',
-    to: 'uniswap',
-    value: 0,
-    token: 'eth',
-    usd: 0.5,
-  },
-  {
-    img: 'eth',
-    time: 'just now',
-    from: '0xFd2e8c1a7...',
-    to: 'Binance Dep...',
-    value: 0.001,
-    token: 'weth',
-    usd: 1.01,
-  },
-  {
-    img: 'eth',
-    time: 'just now',
-    from: 'uniswap',
-    to: 'uniswap',
-    value: 0,
-    token: 'eth',
-    usd: 0.5,
-  },
-  {
-    img: 'eth',
-    time: 'just now',
-    from: '0xFd2e8c1a7...',
-    to: 'Binance Dep...',
-    value: 0.001,
-    token: 'weth',
-    usd: 1.01,
-  },
-];
+export const PRETTY_DATE_FORMAT = 'd/M/yyyy';
 
 const SortHeader = ({
   label,
@@ -130,187 +45,236 @@ const SortHeader = ({
     onClick={onClick}
   >
     <div className='mr-1 flex items-center'>
-      {isDown && <FcGenericSortingDesc className='fill-white' />}
-      {isUp && <FcGenericSortingAsc className='fill-white' />}
-      {!isDown && !isUp && <FcGenericSortingDesc className='fill-white' />}
+      {isDown && <CgSortZa className='fill-white' />}
+      {isUp && <CgSortAz className='fill-white' />}
+      {!isDown && !isUp && <CgSortZa className='fill-white' />}
     </div>
-    {label}
+    <div className='text-xs'>{label}</div>
   </div>
 );
 
 const Table = ({
+  isFetching,
   data,
   sort,
   setSort,
 }: {
+  isFetching: boolean;
   data: TransactionType[];
   sort: string;
-  setSort: Dispatch<string>;
+  setSort: (sort: string) => void;
 }) => {
   return (
     <div className='bg-back-200  w-full rounded p-2'>
       <table className='w-full'>
         <thead className='text-text-100 text-sm'>
           <tr>
-            <th className='text-left'>
-              <BsLink45Deg />
-            </th>
-            <th>
+            <th className='px-2 py-1'>
               <SortHeader
                 className='justify-center'
                 label='Time'
-                isUp={sort === 'time_asc'}
-                isDown={sort === 'time_desck'}
+                isUp={sort === 'timestamp-asc'}
+                isDown={sort === 'timestamp-desc'}
                 onClick={() =>
-                  setSort(sort === 'time_desc' ? 'time_asc' : 'time_desc')
+                  setSort(
+                    sort === 'timestamp-desc'
+                      ? 'timestamp-asc'
+                      : 'timestamp-desc'
+                  )
                 }
               />
             </th>
-            <th>
+            <th className='px-2 py-1'>
               <SortHeader
                 className='justify-center'
-                label='From'
-                isUp={sort === 'from_asc'}
-                isDown={sort === 'from_desck'}
+                label='Wallet Address'
+                isUp={sort === 'account-asc'}
+                isDown={sort === 'account-desc'}
                 onClick={() =>
-                  setSort(sort === 'from_desc' ? 'from_asc' : 'from_desc')
+                  setSort(
+                    sort === 'account-desc' ? 'account-asc' : 'account-desc'
+                  )
                 }
               />
             </th>
-            <th className='text-right'>
+            <th className='px-2 py-1'>
               <SortHeader
-                className='justify-end'
-                label='to'
-                isUp={sort === 'to_asc'}
-                isDown={sort === 'to_desc'}
+                className='justify-center'
+                label='Token'
+                isUp={sort === 'index_token-asc'}
+                isDown={sort === 'index_token-desc'}
                 onClick={() =>
-                  setSort(sort === 'to_desc' ? 'to_asc' : 'to_desc')
+                  setSort(
+                    sort === 'index_token-desc'
+                      ? 'index_token-asc'
+                      : 'index_token-desc'
+                  )
                 }
               />
             </th>
-            <th className='text-right'>
+            <th className='px-2 py-1'>
               <SortHeader
                 className='justify-end'
-                label='value'
-                isUp={sort === 'value_asc'}
-                isDown={sort === 'value_desc'}
+                label='Size Delta'
+                isUp={sort === 'size_delta-asc'}
+                isDown={sort === 'size-desc'}
                 onClick={() =>
-                  setSort(sort === 'value_desc' ? 'value_asc' : 'value_desc')
+                  setSort(
+                    sort === 'size-desc' ? 'size_delta-asc' : 'size_delta-desc'
+                  )
                 }
               />
             </th>
-            <th className='text-right'>
+            <th className='px-2 py-1'>
               <SortHeader
                 className='justify-end'
-                label='token'
-                isUp={sort === 'token_asc'}
-                isDown={sort === 'token_desc'}
+                label='Collateral Delta'
+                isUp={sort === 'collateral_delta-asc'}
+                isDown={sort === 'collateral_delta-desc'}
                 onClick={() =>
-                  setSort(sort === 'token_desc' ? 'token_asc' : 'token_desc')
+                  setSort(
+                    sort === 'collateral_delta-desc'
+                      ? 'collateral_delta-asc'
+                      : 'collateral_delta-desc'
+                  )
                 }
               />
             </th>
-            <th className='text-right'>
+            <th className='px-2 py-1'>
               <SortHeader
                 className='justify-end'
-                label='USD'
-                isUp={sort === 'usd_asc'}
-                isDown={sort === 'usd_desc'}
+                label='tx hash'
+                isUp={sort === 'transaction_hash-asc'}
+                isDown={sort === 'transaction_hash-desc'}
                 onClick={() =>
-                  setSort(sort === 'usd_desc' ? 'usd_asc' : 'usd_desc')
+                  setSort(
+                    sort === 'transaction_hash-desc'
+                      ? 'transaction_hash-asc'
+                      : 'transaction_hash-desc'
+                  )
                 }
               />
             </th>
           </tr>
         </thead>
         <tbody className='text-xs'>
-          {data?.map((row, i) => (
-            <tr
-              key={i}
-              className={clsx('h-[50px] pt-1', i % 2 === 1 && 'bg-back-400')}
-            >
-              <td className='pl-2'>{row.img}</td>
-              <td className='text-center sm:text-[1.2em]'>{row.time}</td>
-              <td className='text-center sm:text-[1.2em]'>{row.from}</td>
-              <td className='text-center sm:text-[1.2em]'>{row.to}</td>
-              <td className='text-center sm:text-[1.2em]'>{row.value}</td>
-              <td className='text-center sm:text-[1.2em]'>{row.token}</td>
-              <td className='text-center sm:text-[1.2em]'>{row.usd}</td>
+          {!isFetching &&
+            data?.map((row, i) => {
+              return (
+                <tr
+                  key={i}
+                  className={clsx(
+                    'h-[50px] pt-1',
+                    i % 2 === 1 && 'bg-back-400'
+                  )}
+                >
+                  <td className='px-2 py-1 text-center text-xs'>
+                    {`${formatDistanceToNow(
+                      new Date(Number(row.timestamp) * 1000)
+                    )}`}
+                  </td>
+                  <td className='px-2 py-1 text-center text-xs'>
+                    {shortAddress(row.account, 4)}
+                  </td>
+                  <td className='px-2 py-1 text-center text-xs'>
+                    {shortAddress(row.index_token, 4)}
+                  </td>
+                  <td
+                    className={clsx(
+                      'px-2 py-1 text-center text-xs',
+                      Number(row.size_delta) > 0 && row.action > 1
+                        ? 'text-red-600'
+                        : 'text-green-600'
+                    )}
+                  >
+                    {Number(row.size_delta) > 0 && row.action > 1 ? '-' : ''}
+                    {numeral(parseInt(row.size_delta) / 10 ** 30).format(
+                      '0,0.[00]'
+                    )}
+                  </td>
+                  <td
+                    className={clsx(
+                      'px-2 py-1 text-center text-xs',
+                      Number(row.collateral_delta) > 0 && row.action > 1
+                        ? 'text-red-600'
+                        : 'text-green-600'
+                    )}
+                  >
+                    {Number(row.collateral_delta) > 0 && row.action > 1
+                      ? '-'
+                      : ''}
+                    {numeral(parseInt(row.collateral_delta) / 10 ** 30).format(
+                      '0,0.[00]'
+                    )}
+                  </td>
+                  <td className='px-2 py-1 text-center text-xs'>
+                    <Link
+                      href={`https://arbiscan.io/tx/${row.transaction_hash}`}
+                      target='_blank'
+                    >
+                      <div className='flex items-center gap-1'>
+                        {shortAddress(row.transaction_hash, 4)}
+                        <BiLinkExternal />
+                      </div>
+                    </Link>
+                  </td>
+                </tr>
+              );
+            })}
+          {isFetching && (
+            <tr>
+              <td colSpan={6}>
+                <div className='flex min-h-[200px] items-center justify-center'>
+                  <Loader size='40px' strokewidth={1.5} />
+                </div>
+              </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
-      {data.length === 0 && (
-        <div className='text-text-100 py-4 text-center text-[1.5em]'>
-          Loading...
-        </div>
-      )}
     </div>
   );
 };
 
-const pageSize = 10;
-
 const DataTable = ({ className }: { className: string }) => {
-  const [sort, setSort] = useState<string>('time_desc');
-  const [page, setPage] = useState<number>(1);
-  const [retry, setRetry] = useState<number>(3);
-
-  const [tableData, setTableData] = useState<TransactionType[]>([]);
-  const [totalCount, setTotalCount] = useState<number>(0);
+  const dispatch = useAppDispatch();
+  const offset = useSelector(selectOffset);
+  const limit = useSelector(selectLimit);
+  const sort = useSelector(selectSort);
+  const user = useSelector(selectUserdata);
+  const transactionData = useSelector(selectTransactionData);
+  const isFetching = useSelector(selectIsFetchingTransactions);
 
   useEffect(() => {
-    setTableData([]);
-    const data = {
-      offset: (page - 1) * pageSize,
-      order: sort,
-      limit: pageSize,
-    };
-
-    Axios.post(`/api/transactions`, data)
-      .then(({ data }) => {
-        setTableData(
-          data.data.map((d: { key: any; pnl: any; realisedpnl: any }) => ({
-            ...d,
-            trade: d.key,
-            pnl: d.pnl || d.realisedpnl,
-          }))
-        );
-        setTotalCount(data.totalcount);
-      })
-      .catch(() => {
-        if (retry) {
-          setRetry(retry - 1);
-        }
+    if (user.id > 0) {
+      dispatch(
+        getTransactionsAsync({
+          user_id: `${user.id}`,
+          limit,
+          offset: offset - 1,
+        })
+      ).then((payload: any) => {
+        if (payload?.error) return;
       });
-  }, [sort, page, retry]);
+    }
+  }, [dispatch, limit, offset, user, sort]);
 
   return (
     <div className={className}>
-      <div className='flex items-center justify-end'>
-        <div className='flex items-center gap-5 text-sm'>
-          <div>Transactions</div>
-          <div className='flex items-center gap-1'>
-            <div>1/500</div>
-            <div>
-              <AiOutlineRight className='text-xs' />
-            </div>
-          </div>
-        </div>
-      </div>
       <Table
-        data={tempData}
+        isFetching={isFetching}
+        data={transactionData.list}
         sort={sort}
-        setSort={(v: SetStateAction<string>) => {
-          setSort(v);
+        setSort={(v) => {
+          dispatch(setSort(v));
         }}
       />
       <div className='p-4 text-center'>
         <Pagination
-          onPageChange={(v: any) => setPage(v)}
-          totalCount={totalCount}
-          currentPage={page}
-          pageSize={pageSize}
+          onPageChange={(v) => dispatch(setOffset(v))}
+          totalCount={transactionData.count}
+          currentPage={offset}
+          pageSize={limit}
         />
       </div>
     </div>

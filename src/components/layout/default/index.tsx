@@ -8,7 +8,9 @@ const Default = ({ children }: { children: ReactNode }): JSX.Element => {
   return (
     <>
       <Header />
-      <div className='bg-back-100 min-h-[calc(100vh_-_64px)]'>{children}</div>
+      <div className='bg-back-100 text-text-200 min-h-[calc(100vh_-_64px)]'>
+        {children}
+      </div>
       <Footer />
     </>
   );

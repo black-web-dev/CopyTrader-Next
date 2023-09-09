@@ -13,7 +13,7 @@ export default {
       },
       colors: {
         'back-100': '#0A0D13',
-        'back-200': '#14161E',
+        'back-200': '#14161D',
         'back-300': '#808aff14',
         'back-400': '#0A0D16',
         'gradient-100': '#1e223de6',

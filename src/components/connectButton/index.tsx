@@ -1,7 +1,12 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { CiWallet } from 'react-icons/ci';
+import { useSelector } from 'react-redux';
+
+import { selectUserdata } from '@/services/auth';
 
 const WalletConnect = () => {
+  const user = useSelector(selectUserdata);
+
   return (
     <ConnectButton.Custom>
       {({
@@ -84,7 +89,11 @@ const WalletConnect = () => {
                     type='button'
                     className='text-text-100 text-xs'
                   >
-                    {account.displayName}
+                    <div className='flex flex-col items-end gap-1'>
+                      <div>{user.email}</div>
+                      <div>{account.displayName}</div>
+                    </div>
+
                     {/* {account.displayBalance
                       ? ` (${account.displayBalance})`
                       : ""} */}

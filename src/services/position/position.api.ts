@@ -1,7 +1,13 @@
 import Axios from '../axios';
 
-export function getPositions() {
-  return Axios.post('/api/positions/list', {});
+export function getPositions({
+  user_id,
+  wallet,
+}: {
+  user_id: string;
+  wallet: string;
+}) {
+  return Axios.post('/api/positions/list', { user_id, wallet });
 }
 
 export function closePosition({

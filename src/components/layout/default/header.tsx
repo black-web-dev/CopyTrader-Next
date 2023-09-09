@@ -11,7 +11,7 @@ const Header = (): JSX.Element => {
   return (
     <header className='bg-back-100 border-border-100 sticky top-0 z-20 flex h-16 flex-row items-center justify-between gap-x-5 border-b px-10 shadow'>
       <Link href='/' className='w-fit'>
-        <Logo className='h-[50px] w-[50px]' />
+        <Logo className='h-[27px] w-[36px]' />
       </Link>
       <div className='flex h-full flex-1 items-center'>
         {MENUS.map((menu, index) => (
