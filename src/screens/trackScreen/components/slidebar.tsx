@@ -69,7 +69,7 @@ const SlideBar = ({
               value && Array.isArray(value) && value[0] ? value[0] : 0,
               value && Array.isArray(value) && value[1] ? value[1] : 50,
             ]}
-            onChange={handleChange}
+            onAfterChange={handleChange}
           />
         </div>
       </div>

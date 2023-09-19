@@ -126,3 +126,83 @@ export const filterOpts: FilterOptionType[] = [
     ],
   },
 ];
+
+export type TableHeader = {
+  label: string;
+  tooltip?: string;
+  sort?: string;
+};
+
+export const closedTableHeader: TableHeader[] = [
+  {
+    label: 'address',
+    tooltip: 'Trader wallet address',
+    sort: '',
+  },
+  {
+    label: 'wallet Amount',
+    sort: 'size',
+  },
+  {
+    label: 'pnl',
+    sort: 'realisedpnl',
+  },
+  {
+    label: 'win/Loss',
+    sort: 'win_loss',
+  },
+  {
+    label: 'ratio',
+    sort: 'ratio',
+  },
+  {
+    label: 'Avg.Levarage',
+    sort: 'avg_leverage',
+  },
+  {
+    label: 'Avg.Collateral',
+    sort: 'avg_coll',
+  },
+  {
+    label: '',
+  },
+];
+
+export const openedTableHeader: TableHeader[] = [
+  {
+    label: 'address',
+    tooltip: 'Trader wallet address',
+    sort: '',
+  },
+  {
+    label: 'token',
+    sort: 'indextoken',
+  },
+  {
+    label: 'l/s',
+    sort: 'islong',
+  },
+  {
+    label: 'size',
+    sort: 'size',
+  },
+  {
+    label: 'collateral',
+    sort: 'collateral',
+  },
+  {
+    label: 'leverage',
+    sort: 'leverage',
+  },
+  {
+    label: 'limit price',
+    sort: 'limit_price',
+  },
+  {
+    label: 'pnl',
+    sort: 'pnl',
+  },
+  {
+    label: '',
+  },
+];

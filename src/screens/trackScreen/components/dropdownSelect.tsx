@@ -53,7 +53,7 @@ const DropdownSelect = ({
       >
         {options.map((opt, index) => {
           return (
-            <div className='relative text-sm' key={index}>
+            <div key={index} className='relative text-sm'>
               <input
                 type='checkbox'
                 id={id + '_' + opt.label + '_check'}
@@ -74,7 +74,12 @@ const DropdownSelect = ({
               />
               <label
                 htmlFor={id + '_' + opt.label + '_check'}
-                className='before:border-border peer-checked:after:bg-primary-100 relative ml-[10px] block h-5 cursor-pointer pl-5 align-top before:absolute before:left-[-10px] before:top-0 before:block before:h-5 before:w-5 before:rounded before:border before:content-[""] peer-checked:after:absolute peer-checked:after:left-[-7px] peer-checked:after:top-[3px] peer-checked:after:block peer-checked:after:h-[14px] peer-checked:after:w-[14px] peer-checked:after:rounded-sm peer-checked:after:content-[""] dark:before:border-gray-700'
+                className={classNames(
+                  'before:border-border peer-checked:after:bg-primary-100 relative ml-[10px] block h-5 pl-5 align-top before:absolute before:left-[-10px] before:top-0 before:block before:h-5 before:w-5 before:rounded before:border before:content-[""] peer-checked:after:absolute peer-checked:after:left-[-7px] peer-checked:after:top-[3px] peer-checked:after:block peer-checked:after:h-[14px] peer-checked:after:w-[14px] peer-checked:after:rounded-sm peer-checked:after:content-[""] dark:before:border-gray-700',
+                  disabled || fixedValue
+                    ? 'cursor-not-allowed opacity-50'
+                    : 'cursor-pointer'
+                )}
               >
                 <div className='flex items-start'>{opt.label}</div>
               </label>

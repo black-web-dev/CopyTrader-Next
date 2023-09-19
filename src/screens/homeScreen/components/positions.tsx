@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { format } from 'date-fns';
 import numeral from 'numeral';
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { AiOutlineExclamationCircle } from 'react-icons/ai';
 import { BsChevronDown } from 'react-icons/bs';
 import { CgSortAz, CgSortZa } from 'react-icons/cg';
@@ -15,6 +15,8 @@ import Loader from '@/components/common/loader';
 import Pagination from '@/components/common/pagination';
 import Tooltip from '@/components/common/tooltip';
 
+import Bear from '@/assets/images/bear.svg';
+import Bull from '@/assets/images/bull.svg';
 import LINK from '@/assets/tokens/link.svg';
 import UNI from '@/assets/tokens/uni.svg';
 import WBTC from '@/assets/tokens/wbtc.svg';
@@ -36,22 +38,43 @@ import { selectTradeDetail } from '@/services/trade';
 
 const PRETTY_DATE_FORMAT = ' hh:mm dd-mm-yyyy';
 
-const indexTokens: any = {
+export const longShortImgs: {
+  [key: string]: {
+    label: string;
+    img: ReactNode;
+  };
+} = {
+  long: {
+    label: 'Long',
+    img: <Bull className='h-5 w-5 text-white' />,
+  },
+  short: {
+    label: 'Short',
+    img: <Bear className='h-5 w-5 text-white' />,
+  },
+};
+
+export const indexTokens: {
+  [key: string]: {
+    label: string;
+    img: ReactNode;
+  };
+} = {
   '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f': {
     label: 'BTC',
     img: <WBTC className='h-5 w-5 text-white' />,
   },
   '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1': {
     label: 'ETH',
-    img: <WETH />,
+    img: <WETH className='h-5 w-5 text-white' />,
   },
   '0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0': {
     label: 'UNI',
-    img: <UNI />,
+    img: <UNI className='h-5 w-5 text-white' />,
   },
   '0xf97f4df75117a78c1A5a0DBb814Af92458539FB4': {
     label: 'LINK',
-    img: <LINK />,
+    img: <LINK className='h-5 w-5 text-white' />,
   },
 };
 

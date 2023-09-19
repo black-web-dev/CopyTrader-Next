@@ -4,9 +4,10 @@ import { useDispatch } from 'react-redux';
 
 import useNotification from '@/hooks/useNotification';
 
-import { logoutAsync } from '@/services/auth';
+import Loader from '@/components/common/loader';
 
-import LoadingIndicator from '~/svg/loadingIndicator.svg';
+import { logoutAsync } from '@/services/auth';
+import { reset } from '@/services/track';
 
 export default function Logout() {
   const router = useRouter();
@@ -14,6 +15,7 @@ export default function Logout() {
   const notification = useNotification();
 
   useEffect(() => {
+    dispatch(reset());
     const action: any = logoutAsync({});
     dispatch(action);
     notification('You have successfully logged out.', 'success');
@@ -22,7 +24,7 @@ export default function Logout() {
 
   return (
     <div className='flex min-h-[calc(100vh_-_56px)] w-full flex-col items-center justify-center gap-2 text-black dark:text-white'>
-      <LoadingIndicator />
+      <Loader size='50px' strokewidth={1} />
       Logging out...
     </div>
   );

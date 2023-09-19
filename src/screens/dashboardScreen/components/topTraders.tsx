@@ -1,7 +1,9 @@
 import clsx from 'clsx';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import numeral from 'numeral';
 import React, { useEffect } from 'react';
+import { BiLinkExternal } from 'react-icons/bi';
 import { useSelector } from 'react-redux';
 
 import useNotification from '@/hooks/useNotification';
@@ -40,11 +42,13 @@ const TopTraders = (): JSX.Element => {
         <table className='w-full'>
           <thead>
             <tr className='text-text-100 text-xs'>
-              <td className='p-1 text-center'>Address</td>
-              <td className='p-1 text-center'>Wallet Amount</td>
-              <td className='p-1 text-center'>PnL%</td>
-              <td className='p-1 text-center'>Win Rate</td>
-              <td className='p-1 text-center'></td>
+              <td className='whitespace-nowrap p-1 text-left'>Address</td>
+              <td className='whitespace-nowrap p-1 text-center'>
+                Wallet Amount
+              </td>
+              <td className='whitespace-nowrap p-1 text-center'>PnL%</td>
+              <td className='whitespace-nowrap p-1 text-center'>Win Rate</td>
+              <td className='whitespace-nowrap p-1 text-center'></td>
             </tr>
           </thead>
           <tbody className='text-xs'>
@@ -59,12 +63,20 @@ const TopTraders = (): JSX.Element => {
                   )}
                 >
                   <td className='px-2 py-1 text-center text-xs'>
-                    {shortAddress(row.account, 3)}
+                    <Link
+                      href={`https://www.gmx.house/arbitrum/account/${row.account}`}
+                      target='_blank'
+                    >
+                      <div className='flex items-center gap-1'>
+                        {shortAddress(row.account, 3)}
+                        <BiLinkExternal />
+                      </div>
+                    </Link>
                   </td>
-                  <td className='px-2 py-1 text-center text-xs'>
+                  <td className='px-2 py-1 text-right text-xs'>
                     {numeral(row.size).format('0,0.[00]')}
                   </td>
-                  <td className='px-2 py-1 text-center text-xs'>
+                  <td className='px-2 py-1 text-right text-xs'>
                     {row.realisedpnl > 0 ? (
                       <div className='text-green-500'>
                         ${numeral(row.realisedpnl).format('0,0.[00]')}
@@ -75,8 +87,8 @@ const TopTraders = (): JSX.Element => {
                       </div>
                     )}
                   </td>
-                  <td className='px-2 py-1 text-center text-xs'>
-                    {numeral(row.wind_loss).format('0,0.[00]')}%
+                  <td className='px-2 py-1 text-right text-xs'>
+                    {numeral(row.win_loss).format('0,0.[00]')}%
                   </td>
                   <td className='px-2 py-1 text-center text-xs'>
                     <button

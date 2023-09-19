@@ -10,6 +10,7 @@ import {
   initialState,
   selectFilter,
   setFilter,
+  setPage,
 } from '@/services/track';
 
 import DropdownSelect from './dropdownSelect';
@@ -65,6 +66,7 @@ const FilterSidebar = () => {
             : value,
       };
       dispatch(setFilter(updatedFilter));
+      dispatch(setPage(1));
     } else {
       const updatedFilter = {
         ...filter,
@@ -74,6 +76,7 @@ const FilterSidebar = () => {
             : value,
       };
       dispatch(setFilter(updatedFilter));
+      dispatch(setPage(1));
     }
   };
 
@@ -83,23 +86,16 @@ const FilterSidebar = () => {
       user_id: `${user.id}`,
     };
     dispatch(setFilter(updatedFilter));
+    dispatch(setPage(1));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, user]);
 
   useEffect(() => {
     if (filter.user_id !== '0') {
       if (filter.status === 'close') {
-        dispatch(getClosedPositionsAsync({ ...filter })).then(
-          (payload: any) => {
-            if (payload?.error) return;
-          }
-        );
+        dispatch(getClosedPositionsAsync({ ...filter }));
       } else {
-        dispatch(getOpenedPositionsAsync({ ...filter })).then(
-          (payload: any) => {
-            if (payload?.error) return;
-          }
-        );
+        dispatch(getOpenedPositionsAsync({ ...filter }));
       }
     }
   }, [dispatch, filter]);

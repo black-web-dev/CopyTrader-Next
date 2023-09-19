@@ -30,7 +30,7 @@ export type TopTraderType = {
   realisedpnl: number;
   leverage: number;
   count: number;
-  wind_loss: number;
+  win_loss: number;
   avg_leverage: number;
   avg_coli: number;
 };

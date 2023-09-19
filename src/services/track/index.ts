@@ -7,7 +7,7 @@ import { bnum } from '@/utils';
 
 import { getClosedPositions, getOpenedPositions } from './track.api';
 
-export type TrackItemType = {
+export interface ClosedTrackItemType {
   action: number;
   account: string;
   win: number;
@@ -20,7 +20,26 @@ export type TrackItemType = {
   win_loss: number;
   avg_leverage: number;
   avg_coll: number;
-};
+}
+
+export interface OpenedTrackItemType {
+  key: string;
+  account: string;
+  indextoken: string;
+  islong: boolean;
+  size: number;
+  collateral: number;
+  averageprice: number;
+  leverage: number;
+  limit_price: number;
+  pnl: number;
+  open: boolean;
+  blocknumber: number;
+  totalfees: number;
+  price: number;
+}
+
+export type TrackItemType = OpenedTrackItemType | ClosedTrackItemType;
 
 export type TrackDataType = {
   count: number;
@@ -69,7 +88,7 @@ export const initialState: TrackStore = {
     status: 'close',
   },
   searchAddress: '',
-  sort: 'size-desc',
+  sort: 'realisedpnl-desc',
   page: 1,
   pageSize: 10,
 };
@@ -103,6 +122,7 @@ const trackSlice = createSlice({
     setTrackDataCount: (state, action) => {
       state.trackdata.count = action.payload;
     },
+    reset: () => initialState,
   },
   extraReducers: (builder) => {
     builder
@@ -115,11 +135,21 @@ const trackSlice = createSlice({
       .addCase(getClosedPositionsAsync.fulfilled, (state, action) => {
         state.isFetching = false;
         Object.assign(state.trackdata, action.payload.data);
+      })
+      .addCase(getOpenedPositionsAsync.pending, (state) => {
+        state.isFetching = true;
+      })
+      .addCase(getOpenedPositionsAsync.rejected, (state) => {
+        state.isFetching = false;
+      })
+      .addCase(getOpenedPositionsAsync.fulfilled, (state, action) => {
+        state.isFetching = false;
+        Object.assign(state.trackdata, action.payload.data);
       });
   },
 });
 
-export const { setFilter, setSort, setPage, setSearchAddress } =
+export const { setFilter, setSort, setPage, setSearchAddress, reset } =
   trackSlice.actions;
 
 export const selectTrackData = (state: AppStore) => {

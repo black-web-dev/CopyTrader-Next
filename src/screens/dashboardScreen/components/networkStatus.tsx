@@ -12,6 +12,7 @@ import {
   selectChainInfoStatus,
   selectIsFetching,
 } from '@/services/dashboard';
+import { classNames } from '@/utils';
 
 import Arbitrum from '~/svg/arbitrum.svg';
 
@@ -77,7 +78,13 @@ const NetworkStatus = (): JSX.Element => {
                     '0,0.[000]'
                   )}
                 </div>
-                <div className='text-[#3AB275]'>
+                <div
+                  className={classNames(
+                    chainInfoStatus.chain_info.arbPriceChange_24h
+                      ? 'text-[#3AB275]'
+                      : 'text-red-600'
+                  )}
+                >
                   {chainInfoStatus.chain_info.arbPriceChange_24h > 0 ? '' : '-'}
                   $
                   {numeral(

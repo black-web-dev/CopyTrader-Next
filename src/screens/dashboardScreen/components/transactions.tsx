@@ -4,12 +4,12 @@ import Link from 'next/link';
 import numeral from 'numeral';
 import React, { useEffect } from 'react';
 import { BiLinkExternal } from 'react-icons/bi';
-import { CgSortAz, CgSortZa } from 'react-icons/cg';
 import { useSelector } from 'react-redux';
 
 import Loader from '@/components/common/loader';
 import Pagination from '@/components/common/pagination';
 
+import { indexTokens } from '@/screens/homeScreen/components/positions';
 import { useAppDispatch } from '@/services';
 import { selectUserdata } from '@/services/auth';
 import {
@@ -23,35 +23,12 @@ import {
   setSort,
   TransactionType,
 } from '@/services/dashboard';
-import { shortAddress } from '@/utils';
+import { classNames, shortAddress } from '@/utils';
+
+import SortHeader from './sortHeader';
+import { TableHeader, tableHeader } from '../utils';
 
 export const PRETTY_DATE_FORMAT = 'd/M/yyyy';
-
-const SortHeader = ({
-  label,
-  onClick,
-  isUp = false,
-  isDown = false,
-  className = '',
-}: {
-  label: string;
-  onClick: () => void;
-  isUp: boolean;
-  isDown: boolean;
-  className: string;
-}) => (
-  <div
-    className={`${className} flex cursor-pointer flex-row items-center`}
-    onClick={onClick}
-  >
-    <div className='mr-1 flex items-center'>
-      {isDown && <CgSortZa className='fill-white' />}
-      {isUp && <CgSortAz className='fill-white' />}
-      {!isDown && !isUp && <CgSortZa className='fill-white' />}
-    </div>
-    <div className='text-xs'>{label}</div>
-  </div>
-);
 
 const Table = ({
   isFetching,
@@ -69,92 +46,32 @@ const Table = ({
       <table className='w-full'>
         <thead className='text-text-100 text-sm'>
           <tr>
-            <th className='px-2 py-1'>
-              <SortHeader
-                className='justify-center'
-                label='Time'
-                isUp={sort === 'timestamp-asc'}
-                isDown={sort === 'timestamp-desc'}
-                onClick={() =>
-                  setSort(
-                    sort === 'timestamp-desc'
-                      ? 'timestamp-asc'
-                      : 'timestamp-desc'
-                  )
-                }
-              />
-            </th>
-            <th className='px-2 py-1'>
-              <SortHeader
-                className='justify-center'
-                label='Wallet Address'
-                isUp={sort === 'account-asc'}
-                isDown={sort === 'account-desc'}
-                onClick={() =>
-                  setSort(
-                    sort === 'account-desc' ? 'account-asc' : 'account-desc'
-                  )
-                }
-              />
-            </th>
-            <th className='px-2 py-1'>
-              <SortHeader
-                className='justify-center'
-                label='Token'
-                isUp={sort === 'index_token-asc'}
-                isDown={sort === 'index_token-desc'}
-                onClick={() =>
-                  setSort(
-                    sort === 'index_token-desc'
-                      ? 'index_token-asc'
-                      : 'index_token-desc'
-                  )
-                }
-              />
-            </th>
-            <th className='px-2 py-1'>
-              <SortHeader
-                className='justify-end'
-                label='Size Delta'
-                isUp={sort === 'size_delta-asc'}
-                isDown={sort === 'size-desc'}
-                onClick={() =>
-                  setSort(
-                    sort === 'size-desc' ? 'size_delta-asc' : 'size_delta-desc'
-                  )
-                }
-              />
-            </th>
-            <th className='px-2 py-1'>
-              <SortHeader
-                className='justify-end'
-                label='Collateral Delta'
-                isUp={sort === 'collateral_delta-asc'}
-                isDown={sort === 'collateral_delta-desc'}
-                onClick={() =>
-                  setSort(
-                    sort === 'collateral_delta-desc'
-                      ? 'collateral_delta-asc'
-                      : 'collateral_delta-desc'
-                  )
-                }
-              />
-            </th>
-            <th className='px-2 py-1'>
-              <SortHeader
-                className='justify-end'
-                label='tx hash'
-                isUp={sort === 'transaction_hash-asc'}
-                isDown={sort === 'transaction_hash-desc'}
-                onClick={() =>
-                  setSort(
-                    sort === 'transaction_hash-desc'
-                      ? 'transaction_hash-asc'
-                      : 'transaction_hash-desc'
-                  )
-                }
-              />
-            </th>
+            {tableHeader.map((header: TableHeader, index: number) => (
+              <th key={index} className='px-2 py-1 capitalize'>
+                <div className='jus flex items-center gap-1'>
+                  {header.sort ? (
+                    <SortHeader
+                      className={classNames(
+                        'flex-1',
+                        index === 0 ? 'justify-start' : 'justify-end'
+                      )}
+                      label={header.label}
+                      isUp={sort === `${header.sort}-asc`}
+                      isDown={sort === `${header.sort}-desc`}
+                      onClick={() =>
+                        setSort(
+                          sort === `${header.sort}-desc`
+                            ? `${header.sort}-asc`
+                            : `${header.sort}-desc`
+                        )
+                      }
+                    />
+                  ) : (
+                    <div>{header.label}</div>
+                  )}
+                </div>
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody className='text-xs'>
@@ -174,14 +91,26 @@ const Table = ({
                     )}`}
                   </td>
                   <td className='px-2 py-1 text-center text-xs'>
-                    {shortAddress(row.account, 4)}
+                    <div className='flex items-center justify-end'>
+                      <Link
+                        href={`https://www.gmx.house/arbitrum/account/${row.account}`}
+                        target='_blank'
+                      >
+                        <div className='flex items-center gap-1'>
+                          {shortAddress(row.account, 4)}
+                          <BiLinkExternal />
+                        </div>
+                      </Link>
+                    </div>
                   </td>
-                  <td className='px-2 py-1 text-center text-xs'>
-                    {shortAddress(row.index_token, 4)}
+                  <td className='px-2 py-1 text-right text-xs'>
+                    <div className='flex items-center justify-end'>
+                      {indexTokens[row.index_token]?.img}
+                    </div>
                   </td>
                   <td
                     className={clsx(
-                      'px-2 py-1 text-center text-xs',
+                      'px-2 py-1 text-right text-xs',
                       Number(row.size_delta) > 0 && row.action > 1
                         ? 'text-red-600'
                         : 'text-green-600'
@@ -194,7 +123,7 @@ const Table = ({
                   </td>
                   <td
                     className={clsx(
-                      'px-2 py-1 text-center text-xs',
+                      'px-2 py-1 text-right text-xs',
                       Number(row.collateral_delta) > 0 && row.action > 1
                         ? 'text-red-600'
                         : 'text-green-600'
@@ -208,15 +137,17 @@ const Table = ({
                     )}
                   </td>
                   <td className='px-2 py-1 text-center text-xs'>
-                    <Link
-                      href={`https://arbiscan.io/tx/${row.transaction_hash}`}
-                      target='_blank'
-                    >
-                      <div className='flex items-center gap-1'>
-                        {shortAddress(row.transaction_hash, 4)}
-                        <BiLinkExternal />
-                      </div>
-                    </Link>
+                    <div className='flex items-center justify-end'>
+                      <Link
+                        href={`https://arbiscan.io/tx/${row.transaction_hash}`}
+                        target='_blank'
+                      >
+                        <div className='flex items-center gap-1'>
+                          {shortAddress(row.transaction_hash, 4)}
+                          <BiLinkExternal />
+                        </div>
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               );
@@ -251,7 +182,7 @@ const DataTable = ({ className }: { className: string }) => {
         getTransactionsAsync({
           user_id: `${user.id}`,
           limit,
-          offset: offset - 1,
+          offset: (offset - 1) * limit,
         })
       ).then((payload: any) => {
         if (payload?.error) return;
