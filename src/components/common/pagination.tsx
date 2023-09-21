@@ -41,6 +41,7 @@ type PaginationType = {
   siblingCount?: number;
   currentPage: number;
   pageSize: number;
+  disabled?: boolean;
 };
 
 export const Pagination = ({
@@ -49,6 +50,7 @@ export const Pagination = ({
   siblingCount = 1,
   currentPage,
   pageSize,
+  disabled
 }: PaginationType) => {
   const paginationRange: (string | number)[] = usePagination({
     currentPage,
@@ -81,7 +83,7 @@ export const Pagination = ({
       <Item
         className='rounded-l-md p-1.5 sm:p-2'
         onClick={onPrevious}
-        disabled={currentPage === 1}
+        disabled={currentPage === 1 || disabled}
       >
         <span className='sr-only'>Previous</span>
         <BsChevronLeft />
@@ -106,6 +108,7 @@ export const Pagination = ({
             className='px-3 py-1.5 sm:px-4 sm:py-2'
             onClick={() => onPageChange(pageNumber)}
             selected={pageNumber === currentPage}
+            disabled={disabled}
             key={i}
           >
             {pageNumber}
@@ -126,7 +129,7 @@ export const Pagination = ({
       <Item
         className='rounded-r-md p-1.5 sm:p-2'
         onClick={onNext}
-        disabled={currentPage === lastPage}
+        disabled={currentPage === lastPage || disabled}
       >
         <span className='sr-only'>Next</span>
         <BsChevronRight />

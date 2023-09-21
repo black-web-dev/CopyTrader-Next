@@ -1,7 +1,9 @@
+import { selectIsFetching } from '@/services/track';
 import clsx from 'clsx';
 import Slider from 'rc-slider';
 import React, { ReactNode, useState } from 'react';
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
+import { useSelector } from 'react-redux';
 
 const marks = {
   0: '0x',
@@ -23,6 +25,7 @@ const SlideBar = ({
   id,
   img,
   title,
+  isExpanded,
   value,
   setValue,
 }: {
@@ -30,13 +33,15 @@ const SlideBar = ({
   id: string;
   img: ReactNode;
   title: string;
+  isExpanded?: boolean;
   value?: string | number | number[];
   setValue: (type: string, id: string, value: number | number[]) => void;
 }) => {
-  const [isOpened, setIsOpened] = useState(false);
+  const [isOpened, setIsOpened] = useState(!!isExpanded);
+  const isFetching = useSelector(selectIsFetching);
 
   const handleChange = (value: number | number[]) => {
-    setValue(type, id, value);
+    !isFetching && setValue(type, id, value);
   };
   return (
     <div className='flex flex-col'>
@@ -65,6 +70,7 @@ const SlideBar = ({
             max={50}
             marks={marks}
             allowCross={false}
+            disabled={isFetching}
             defaultValue={[
               value && Array.isArray(value) && value[0] ? value[0] : 0,
               value && Array.isArray(value) && value[1] ? value[1] : 50,

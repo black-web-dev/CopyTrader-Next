@@ -15,6 +15,7 @@ export type FilterOptionType = {
   type: string;
   img: ReactNode;
   title: string;
+  isExpanded?: boolean;
   fixedValue?: boolean;
   options: OptionsType[];
 };
@@ -55,7 +56,7 @@ export const filterOpts: FilterOptionType[] = [
       { label: '$100-$1000', value: [100, 1000] },
       { label: '$1000-$5000', value: [1000, 5000] },
       { label: '$5000-$10000', value: [5000, 10000] },
-      { label: '$10000+', value: [0, 1e300] },
+      { label: '$10000+', value: [10000, 1e270] },
     ],
   },
   {
@@ -63,11 +64,12 @@ export const filterOpts: FilterOptionType[] = [
     type: 'select',
     img: <BiTargetLock />,
     title: 'Trade Size',
+    isExpanded: true,
     options: [
       { label: '$100-$1000', value: [100, 1000] },
       { label: '$1000-$5000', value: [1000, 5000] },
       { label: '$5000-$10000', value: [5000, 10000] },
-      { label: '$10000+', value: [0, 1e300] },
+      { label: '$10000+', value: [10000, 1e270] },
     ],
   },
   {
@@ -91,6 +93,7 @@ export const filterOpts: FilterOptionType[] = [
     type: 'slidebar',
     img: <CiSliderVertical />,
     title: 'Leverage',
+    isExpanded: true,
     options: [],
   },
   {
@@ -98,6 +101,7 @@ export const filterOpts: FilterOptionType[] = [
     type: 'select',
     img: <FiExternalLink />,
     title: 'Open/Closed',
+    isExpanded: true,
     options: [
       {
         label: 'Open',
@@ -114,6 +118,7 @@ export const filterOpts: FilterOptionType[] = [
     type: 'select',
     img: <FiExternalLink />,
     title: 'Win/Loss',
+    isExpanded: true,
     options: [
       {
         label: '>50%',

@@ -4,7 +4,7 @@ import LocalStorage, { ACCESS_TOKEN } from '@/hooks/useStorage';
 
 const Axios = axios.create({
   responseType: 'json',
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_URL + '/api_v1',
 });
 
 Axios.interceptors.request.use(function (options) {

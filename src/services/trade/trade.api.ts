@@ -7,7 +7,7 @@ export function getCopyStatus({
   user_id: string;
   wallet: string;
 }) {
-  return Axios.post('/api/copy/status', { user_id, wallet });
+  return Axios.post('/copy/status', { user_id, wallet });
 }
 
 export function startCopyTrader({
@@ -23,7 +23,7 @@ export function startCopyTrader({
   collateral_ratio: number;
   leverage_ratio: number;
 }) {
-  return Axios.post('/api/copy/start', {
+  return Axios.post('/copy/start', {
     user_id,
     wallet,
     leader_address,
@@ -41,7 +41,7 @@ export function stopCopyTrader({
   wallet: string;
   leader_address: string;
 }) {
-  return Axios.post('/api/copy/stop', { user_id, wallet, leader_address });
+  return Axios.post('/copy/stop', { user_id, wallet, leader_address });
 }
 
 export function getCopyTraderAccount({
@@ -51,5 +51,5 @@ export function getCopyTraderAccount({
   user_id: string;
   wallet: string;
 }) {
-  return Axios.post('/api/copy/getaccount', { user_id, wallet });
+  return Axios.post('/copy/getaccount', { user_id, wallet });
 }

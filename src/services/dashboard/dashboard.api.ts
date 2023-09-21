@@ -1,11 +1,11 @@
 import Axios from '../axios';
 
 export function getChainInfo({ user_id }: { user_id: string }) {
-  return Axios.post('/api/chain/info', { user_id });
+  return Axios.post('/chain/info', { user_id });
 }
 
 export function getTopTraders({ user_id }: { user_id: string }) {
-  return Axios.post('/api/positions/closed', {
+  return Axios.post('/positions/closed', {
     user_id,
     chain: 'arbitrum',
     protocol: 'GMX',
@@ -27,5 +27,5 @@ export function getTransactions({
   offset: number;
   limit: number;
 }) {
-  return Axios.post('/api/gmx/transactions', { user_id, offset, limit });
+  return Axios.post('/gmx/transactions', { user_id, offset, limit });
 }

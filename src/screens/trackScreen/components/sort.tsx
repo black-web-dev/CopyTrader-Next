@@ -2,7 +2,8 @@ import clsx from 'clsx';
 import React, { useState } from 'react';
 
 import { useAppDispatch } from '@/services';
-import { setFilter } from '@/services/track';
+import { selectIsFetching, setFilter } from '@/services/track';
+import { useSelector } from 'react-redux';
 
 type DurationType = {
   label: string;
@@ -27,10 +28,13 @@ const durations: DurationType[] = [
 const Duration = (): JSX.Element => {
   const [selected, setSelected] = useState<number>(0);
   const dispatch = useAppDispatch();
+  const isFetching = useSelector(selectIsFetching);
 
   const handleSelect = (index: number, item: DurationType) => () => {
-    setSelected(index);
-    dispatch(setFilter({ period: item.period }));
+    if (!isFetching) {
+      setSelected(index);
+      dispatch(setFilter({ period: item.period }));
+    }
   };
 
   return (
@@ -39,8 +43,9 @@ const Duration = (): JSX.Element => {
         <div
           key={index}
           className={clsx(
-            'cursor-default text-sm',
-            selected === index ? 'font-bold text-white' : 'text-text-100'
+            'text-sm',
+            selected === index ? 'font-bold text-white' : 'text-text-100',
+            isFetching ? 'cursor-not-allowed' : 'cursor-pointer'
           )}
           onClick={handleSelect(index, item)}
         >

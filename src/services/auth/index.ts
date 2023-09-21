@@ -6,6 +6,7 @@ import LocalStorage, { ACCESS_TOKEN, USER_ID } from '@/hooks/useStorage';
 import { AppStore } from '@/services/index';
 
 import {
+  changePassword,
   checkEmail,
   logout,
   signin,
@@ -58,6 +59,10 @@ export const signupAsync = createAsyncThunk(
 export const logoutAsync = createAsyncThunk(
   'auth/logout',
   errorHandler(logout)
+);
+export const changePasswordAsync = createAsyncThunk(
+  'auth/changePassword',
+  errorHandler(changePassword)
 );
 
 const authSlice = createSlice({

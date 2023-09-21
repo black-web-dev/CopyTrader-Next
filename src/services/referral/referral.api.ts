@@ -10,7 +10,7 @@ export type InviteDetailType = {
 };
 
 export function sendInvite(inviteDetail: InviteDetailType) {
-  return Axios.post('/api/user/invite', inviteDetail);
+  return Axios.post('/user/invite', inviteDetail);
 }
 
 export function deleteInvite({
@@ -20,17 +20,17 @@ export function deleteInvite({
   user_id: number;
   email: string;
 }) {
-  return Axios.post('/api/user/invited_delete', { user_id, email });
+  return Axios.post('/user/invited_delete', { user_id, email });
 }
 
 export function getInvitedList({ user_id }: { user_id: number }) {
-  return Axios.post('/api/user/invited_list', {
+  return Axios.post('/user/invited_list', {
     user_id,
   });
 }
 
 export function getInviteCode({ user_id }: { user_id: number }) {
-  return Axios.post('/api/user/invite_code', {
+  return Axios.post('/user/invite_code', {
     user_id,
   });
 }

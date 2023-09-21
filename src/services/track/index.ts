@@ -82,7 +82,7 @@ export const initialState: TrackStore = {
     wallet_amount: [0, 1e270],
     trade_size: [0, 1e270],
     leverage: [0, 50],
-    side: 'long',
+    side: 'all',
     win_loss_min: 0,
     period: '86400',
     status: 'close',

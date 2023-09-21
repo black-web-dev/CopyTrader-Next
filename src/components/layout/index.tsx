@@ -25,7 +25,7 @@ const Layout = ({ children }: { children: ReactNode }): JSX.Element => {
     };
   }, [router, notification]);
 
-  if (pathname.includes('register') || pathname.includes('login'))
+  if (pathname.includes('register') || pathname.includes('login') || pathname.includes('password'))
     return <>{children}</>;
 
   return <Default>{children}</Default>;

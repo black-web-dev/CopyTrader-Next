@@ -14,6 +14,7 @@ import WalletConnect from '@/components/connectButton';
 
 import { chains } from '@/configs/wagmiConfig';
 import { selectUserdata } from '@/services/auth';
+import { AiOutlineKey } from 'react-icons/ai';
 
 const AccountDropMenu = (): JSX.Element => {
   const router = useRouter();
@@ -103,7 +104,7 @@ const AccountDropMenu = (): JSX.Element => {
                       'border-border-100 flex cursor-pointer items-center gap-2 border-t px-4 py-2 text-sm'
                     )}
                   >
-                    <Link href='/signin' className='flex items-center gap-2'>
+                    <Link href='/account/login' className='flex items-center gap-2'>
                       <BiLogIn className='h-6 w-6' />
                       <div>Log in</div>
                     </Link>
@@ -111,20 +112,37 @@ const AccountDropMenu = (): JSX.Element => {
                 )}
               </Menu.Item>
             ) : (
-              <Menu.Item>
-                {({ active }: { active: boolean }) => (
-                  <span
-                    className={clsx(
-                      active ? 'bg-back-300 text-white' : 'text-text-100',
-                      'border-border-100 flex cursor-pointer items-center gap-2 border-t px-4 py-2 text-sm'
-                    )}
-                    onClick={() => router.push('/account/logout')}
-                  >
-                    <BiLogOut className='h-6 w-6' />
-                    <div>Log out</div>
-                  </span>
-                )}
-              </Menu.Item>
+              <>
+                <Menu.Item>
+                  {({ active }: { active: boolean }) => (
+                    <span
+                      className={clsx(
+                        active ? 'bg-back-300 text-white' : 'text-text-100',
+                        'border-border-100 flex cursor-pointer items-center gap-2 border-t px-4 py-2 text-sm'
+                      )}
+                    >
+                      <Link href='/account/password' className='flex items-center gap-2'>
+                        <AiOutlineKey className='h-6 w-6' />
+                        <div>Change password</div>
+                      </Link>
+                    </span>
+                  )}
+                </Menu.Item>
+                <Menu.Item>
+                  {({ active }: { active: boolean }) => (
+                    <span
+                      className={clsx(
+                        active ? 'bg-back-300 text-white' : 'text-text-100',
+                        'border-border-100 flex cursor-pointer items-center gap-2 border-t px-4 py-2 text-sm'
+                      )}
+                      onClick={() => router.push('/account/logout')}
+                    >
+                      <BiLogOut className='h-6 w-6' />
+                      <div>Log out</div>
+                    </span>
+                  )}
+                </Menu.Item>
+              </>
             )}
           </Menu.Items>
         </Transition>

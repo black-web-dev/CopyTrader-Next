@@ -51,7 +51,7 @@ const InviteLink = (): JSX.Element => {
           className='bg-primary-100 hover:bg-primary-100/50 flex justify-center rounded px-3 py-1.5 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 active:scale-95'
           onClick={handleCopyLink}
         >
-          Copy Link
+          {isCopied ? 'Copied' : 'Copy Link'}
         </button>
       </div>
       <div className='text-sm text-white/25'>

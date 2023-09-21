@@ -297,6 +297,7 @@ const DataTable = ({ className }: { className: string }) => {
           onPageChange={(v) => dispatch(setPage(v))}
           totalCount={trackData.count}
           currentPage={page}
+          disabled={isFetching}
           pageSize={pageSize}
         />
       </div>
@@ -305,11 +306,15 @@ const DataTable = ({ className }: { className: string }) => {
 };
 
 const Transactions = () => {
+  const filter = useSelector(selectFilter);
+
   return (
     <div className='flex flex-col items-start gap-3'>
-      <div className='flex w-full items-center justify-end'>
-        <SortOption />
-      </div>
+      {filter.status === 'close' && (
+        <div className='flex w-full items-center justify-end'>
+          <SortOption />
+        </div>
+      )}
       <div className='bg-back-200 flex w-full gap-12 rounded p-2'>
         <DataTable className='flex-1' />
       </div>

@@ -3,12 +3,15 @@ import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
 
 import { OptionsType } from '../utils';
 import { classNames } from '../../../utils';
+import { selectIsFetching } from '@/services/track';
+import { useSelector } from 'react-redux';
 
 const DropdownSelect = ({
   id,
   type,
   img,
   title,
+  isExpanded,
   fixedValue = false,
   options,
   selectedOpt,
@@ -19,6 +22,7 @@ const DropdownSelect = ({
   type: string;
   img: ReactNode;
   title: string;
+  isExpanded?: boolean;
   fixedValue?: boolean;
   options: OptionsType[];
   selectedOpt?: string | number | number[];
@@ -29,7 +33,8 @@ const DropdownSelect = ({
   ) => void;
   disabled: boolean;
 }): JSX.Element => {
-  const [isOpened, setIsOpened] = useState(false);
+  const [isOpened, setIsOpened] = useState(!!isExpanded);
+  const isFetching = useSelector(selectIsFetching);
 
   return (
     <div className='flex flex-col'>
@@ -60,7 +65,7 @@ const DropdownSelect = ({
                 className='peer hidden'
                 aria-describedby={id + '_' + opt.label + '_check'}
                 readOnly={fixedValue}
-                disabled={disabled}
+                disabled={disabled || isFetching}
                 checked={
                   disabled
                     ? false
@@ -69,14 +74,14 @@ const DropdownSelect = ({
                     : JSON.stringify(selectedOpt) === JSON.stringify(opt.value)
                 }
                 onChange={() => {
-                  !fixedValue && onSelect(type, id, opt.value);
+                  !isFetching && !fixedValue && onSelect(type, id, opt.value);
                 }}
               />
               <label
                 htmlFor={id + '_' + opt.label + '_check'}
                 className={classNames(
                   'before:border-border peer-checked:after:bg-primary-100 relative ml-[10px] block h-5 pl-5 align-top before:absolute before:left-[-10px] before:top-0 before:block before:h-5 before:w-5 before:rounded before:border before:content-[""] peer-checked:after:absolute peer-checked:after:left-[-7px] peer-checked:after:top-[3px] peer-checked:after:block peer-checked:after:h-[14px] peer-checked:after:w-[14px] peer-checked:after:rounded-sm peer-checked:after:content-[""] dark:before:border-gray-700',
-                  disabled || fixedValue
+                  disabled || fixedValue || isFetching
                     ? 'cursor-not-allowed opacity-50'
                     : 'cursor-pointer'
                 )}

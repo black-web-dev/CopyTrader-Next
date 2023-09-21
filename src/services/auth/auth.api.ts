@@ -3,13 +3,13 @@ import LocalStorage, { USER_ID } from '@/hooks/useStorage';
 import Axios from '../axios';
 
 export function signinWithToken() {
-  return Axios.post('/api/auth/access_token', {
+  return Axios.post('/auth/access_token', {
     user_id: LocalStorage.get(USER_ID, ''),
   });
 }
 
 export function checkEmail({ email }: { email: string }) {
-  return Axios.post('/api/auth/checkemail', {
+  return Axios.post('/auth/checkemail', {
     email,
   });
 }
@@ -21,7 +21,7 @@ export function signin({
   email: string;
   password: string;
 }) {
-  return Axios.post('/api/auth/signin', { email, password });
+  return Axios.post('/auth/signin', { email, password });
 }
 
 export function signup({
@@ -41,7 +41,7 @@ export function signup({
   password: string;
   invite_code?: string;
 }) {
-  return Axios.post('/api/auth/signup', {
+  return Axios.post('/auth/signup', {
     email,
     firstName,
     lastName,
@@ -54,4 +54,20 @@ export function signup({
 
 export async function logout() {
   return Promise.resolve();
+}
+
+export function changePassword({
+  user_id,
+  oldPassword,
+  newPassword,
+}: {
+  user_id: string;
+  oldPassword: string;
+  newPassword: string;
+}) {
+  return Axios.post('/user/change_password', {
+    user_id: user_id,
+    old_password: oldPassword,
+    new_password: newPassword,
+  });
 }
