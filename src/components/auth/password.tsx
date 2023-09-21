@@ -114,12 +114,16 @@ const Password = (): JSX.Element => {
                       className='focus:shadow-inputFocus block w-full rounded border-0 bg-white/5 px-2 py-1.5 text-white focus:outline-0 focus:ring-0 sm:text-sm sm:leading-6'
                     />
                     <div
-                      className='absolute top-0 bottom-0 right-2 flex items-center justify-center'
+                      className='absolute bottom-0 right-2 top-0 flex items-center justify-center'
                       onMouseDown={() => setIsShow(true)}
                       onMouseUp={() => setIsShow(false)}
                       onMouseLeave={() => setIsShow(false)}
                     >
-                      {isShow ? <AiOutlineEyeInvisible className='text-white' /> : <AiOutlineEye className='text-white' />}
+                      {isShow ? (
+                        <AiOutlineEyeInvisible className='text-white' />
+                      ) : (
+                        <AiOutlineEye className='text-white' />
+                      )}
                     </div>
                   </div>
                   <ErrorMessage

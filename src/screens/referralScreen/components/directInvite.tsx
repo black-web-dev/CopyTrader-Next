@@ -133,9 +133,9 @@ const DirectInvite = (): JSX.Element => {
   );
 
   return (
-    <div className='flex flex-col rounded bg-[#14161D] px-[29px] py-[23px]'>
+    <div className='flex flex-col rounded bg-[#14161D] p-2 md:px-[29px] md:py-[23px]'>
       <div className='mb-[13px] flex items-center gap-4'>
-        <div>Direct Invites</div>
+        <div className='text-text-100'>Direct Invites</div>
         <div className='text-[#3AB275]'>
           {user?.role === 'admin'
             ? `${invitations.count} Sent`

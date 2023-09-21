@@ -228,6 +228,11 @@ const CopyTraderModal = (): JSX.Element => {
     }
   }, [currentActionStatus, notification]);
 
+  const handleClose = () => {
+    setCurrentActionIndex(0);
+    dispatch(setIsShowCopyTradeModal(false));
+  };
+
   useEffect(() => {
     const actionsStatus: ActionStatusType[] = actionDetails.map(
       (actionDetail) => {
@@ -282,7 +287,7 @@ const CopyTraderModal = (): JSX.Element => {
             ) : (
               <></>
             );
-            isActive = !!isCopyTrading || isSuccessStartCopyTrading;
+            isActive = !!isCopyTrading;
             isLoading = !!isLoadingStartCopyTrading;
             disabled = !copyTraderAccount;
             onSubmit = startCopyTradingContract;
@@ -339,7 +344,7 @@ const CopyTraderModal = (): JSX.Element => {
         id: 'contractAddress',
         title: 'Create copy trader account',
         description:
-          'To start copy trading, user need to create the contract for wallet address',
+          'To start copy trading, user needs to create the contract for wallet address',
         label: 'Create Account',
       },
       {
@@ -352,15 +357,15 @@ const CopyTraderModal = (): JSX.Element => {
       {
         id: 'isCopyTradingContract',
         title: 'Start copy trading on contract',
-        description: 'To start copy trading, user need to enable contract',
-        label: 'Enable copyTrading',
+        description: 'To start copy trading, user needs to enable contract',
+        label: 'Enable Copy Trading',
       },
       {
         id: 'isCopyTradingBackend',
         title: 'Start copy trading on backend',
         description:
-          'To start copy trading, user need to create the contract for wallet address',
-        label: 'Start copyTrading',
+          'To start copy trading, user needs to create the contract for wallet address',
+        label: 'Start Copy Trading',
       },
     ];
     setActionDetails(actionDetail);
@@ -393,16 +398,16 @@ const CopyTraderModal = (): JSX.Element => {
     isSuccessStartCopyTrading && refetchIsCopyTrading?.();
   }, [isSuccessStartCopyTrading, refetchIsCopyTrading]);
 
+  useEffect(() => {
+    setCurrentActionIndex(0);
+  }, [isShow]);
+
   return (
-    <HeadlessUiModal.Controlled
-      isOpen={isShow}
-      onDismiss={() => dispatch(setIsShowCopyTradeModal(false))}
-      maxWidth='md'
-    >
+    <HeadlessUiModal.Controlled isOpen={isShow} maxWidth='md'>
       <div className='flex w-full flex-col space-y-6'>
         <HeadlessUiModal.Header
           header='START COPY TRADING'
-          onClose={() => dispatch(setIsShowCopyTradeModal(false))}
+          onClose={handleClose}
         />
         <HeadlessUiModal.Content>
           <div className='flex flex-col gap-5'>
@@ -528,9 +533,7 @@ const CopyTraderModal = (): JSX.Element => {
               {currentActionStatus?.label}
             </HeadlessUiModal.Action>
           ) : (
-            <HeadlessUiModal.Action
-              onClick={() => dispatch(setIsShowCopyTradeModal(false))}
-            >
+            <HeadlessUiModal.Action onClick={handleClose}>
               Done
             </HeadlessUiModal.Action>
           )}

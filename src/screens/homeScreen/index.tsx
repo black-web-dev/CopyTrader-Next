@@ -11,9 +11,14 @@ const HomeScreen = () => {
       <div className='flex flex-auto flex-col gap-y-4'>
         <CurrencyStatus />
         <TradingViewWidget />
+        <div className='flex justify-center md:hidden'>
+          <Panel />
+        </div>
         <Positions />
       </div>
-      <Panel />
+      <div className='hidden md:flex'>
+        <Panel />
+      </div>
     </div>
   );
 };

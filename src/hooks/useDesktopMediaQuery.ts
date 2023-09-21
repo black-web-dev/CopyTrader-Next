@@ -4,7 +4,7 @@ import { useMediaQuery } from 'react-responsive';
 const useDesktopMediaQuery = () => {
   // const { breakpoints } = publicRuntimeConfig
   // return useMediaQuery({ query: `(min-width: ${breakpoints.lg}` })
-  return useMediaQuery({ query: `(min-width: 600px` });
+  return useMediaQuery({ query: `(min-width: 800px` });
 };
 
 export const useTouchDeviceMediaQuery = () => {

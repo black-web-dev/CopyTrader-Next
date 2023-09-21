@@ -1,9 +1,12 @@
-import { selectIsFetching } from '@/services/track';
 import clsx from 'clsx';
 import Slider from 'rc-slider';
 import React, { ReactNode, useState } from 'react';
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
+
+import useDesktopMediaQuery from '@/hooks/useDesktopMediaQuery';
+
+import { selectIsFetching } from '@/services/track';
 
 const marks = {
   0: '0x',
@@ -37,7 +40,8 @@ const SlideBar = ({
   value?: string | number | number[];
   setValue: (type: string, id: string, value: number | number[]) => void;
 }) => {
-  const [isOpened, setIsOpened] = useState(!!isExpanded);
+  const isDesktop = useDesktopMediaQuery();
+  const [isOpened, setIsOpened] = useState(!isDesktop ? false : !!isExpanded);
   const isFetching = useSelector(selectIsFetching);
 
   const handleChange = (value: number | number[]) => {

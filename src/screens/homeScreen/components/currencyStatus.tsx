@@ -35,7 +35,7 @@ const CurrencyList = (): JSX.Element => {
     <Menu as='div' className='relative ml-3'>
       <div>
         <Menu.Button className='flex items-center gap-x-2 rounded p-2 text-lg font-extrabold hover:outline-none'>
-          <div>{currentPair.label}</div>
+          <div>{currentPair?.label}</div>
           <BiChevronDown className='text-text-100 h-6 w-6' />
         </Menu.Button>
       </div>

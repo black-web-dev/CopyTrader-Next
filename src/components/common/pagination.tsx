@@ -50,7 +50,7 @@ export const Pagination = ({
   siblingCount = 1,
   currentPage,
   pageSize,
-  disabled
+  disabled,
 }: PaginationType) => {
   const paginationRange: (string | number)[] = usePagination({
     currentPage,

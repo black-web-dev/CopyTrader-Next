@@ -1,9 +1,9 @@
 import clsx from 'clsx';
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import { useAppDispatch } from '@/services';
 import { selectIsFetching, setFilter } from '@/services/track';
-import { useSelector } from 'react-redux';
 
 type DurationType = {
   label: string;

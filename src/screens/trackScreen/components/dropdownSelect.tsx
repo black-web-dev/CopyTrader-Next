@@ -1,10 +1,13 @@
 import React, { ReactNode, useState } from 'react';
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
+import { useSelector } from 'react-redux';
+
+import useDesktopMediaQuery from '@/hooks/useDesktopMediaQuery';
+
+import { selectIsFetching } from '@/services/track';
 
 import { OptionsType } from '../utils';
 import { classNames } from '../../../utils';
-import { selectIsFetching } from '@/services/track';
-import { useSelector } from 'react-redux';
 
 const DropdownSelect = ({
   id,
@@ -33,7 +36,8 @@ const DropdownSelect = ({
   ) => void;
   disabled: boolean;
 }): JSX.Element => {
-  const [isOpened, setIsOpened] = useState(!!isExpanded);
+  const isDesktop = useDesktopMediaQuery();
+  const [isOpened, setIsOpened] = useState(!isDesktop ? false : !!isExpanded);
   const isFetching = useSelector(selectIsFetching);
 
   return (

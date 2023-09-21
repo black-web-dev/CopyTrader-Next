@@ -10,12 +10,14 @@ export type FilterOptionsType = {
 
 const TrackScreen = (): JSX.Element => {
   return (
-    <div className='mx-auto flex h-full w-full max-w-6xl items-start justify-center gap-7 p-10'>
+    <div className='mx-auto flex h-full w-full max-w-6xl items-start justify-center gap-7 p-4 sm:p-10'>
       <FilterSidebar />
       <div className='flex w-full flex-col'>
-        <div className='mb-[26px] text-3xl font-medium'>Track</div>
+        <div className='mb-[26px] mt-10 text-3xl font-medium sm:mt-0'>
+          Track
+        </div>
         <SearchAddress />
-        <div className='mt-[26px] text-base font-bold'>Select Top Traders</div>
+        <div className='my-[26px] text-base font-bold'>Select Top Traders</div>
         <TrackTable />
       </div>
     </div>

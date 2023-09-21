@@ -12,8 +12,8 @@ const DashboardScreen = () => {
         <div className='text-3xl font-medium'>Dashboard</div>
         <SearchInput />
       </div>
-      <div className='mt-[34px] flex w-full gap-10'>
-        <div className='flex max-w-[600px] flex-col gap-7'>
+      <div className='mt-[34px] flex w-full flex-col gap-10 lg:flex-row'>
+        <div className='flex w-full flex-col gap-7 lg:max-w-[600px]'>
           <NetworkStatus />
           <TopTraders />
         </div>

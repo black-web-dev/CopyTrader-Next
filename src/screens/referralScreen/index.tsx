@@ -15,17 +15,17 @@ const Referral = (): JSX.Element => {
           time a new users signs up using your unique code or invite.
         </div>
       </div>
-      <div className='mt-10 flex w-full gap-16'>
-        <div className='flex w-[400px] flex-col gap-10'>
+      <div className='mt-10 flex w-full flex-col gap-5 md:flex-row md:gap-16'>
+        <div className='flex w-full flex-col items-center justify-center gap-10 md:w-[400px]'>
           <InviteDetail />
         </div>
-        <div className='flex flex-1 flex-col'>
+        <div className='flex flex-col md:flex-1'>
           <InviteLink />
         </div>
       </div>
 
-      <div className='mt-10 flex w-full gap-16'>
-        <div className='flex w-[400px] flex-col gap-10'>
+      <div className='mt-10 flex w-full gap-5 md:gap-16'>
+        <div className='hidden w-[400px] flex-col gap-10 md:flex'>
           <DirectInvite />
         </div>
         <div className='flex flex-1 flex-col'>

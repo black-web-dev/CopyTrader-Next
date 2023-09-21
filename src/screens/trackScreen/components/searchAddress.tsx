@@ -2,6 +2,8 @@ import React from 'react';
 import { AiOutlineExclamationCircle } from 'react-icons/ai';
 import { useSelector } from 'react-redux';
 
+import useDesktopMediaQuery from '@/hooks/useDesktopMediaQuery';
+
 import Tooltip from '@/components/common/tooltip';
 
 import { useAppDispatch } from '@/services';
@@ -13,12 +15,18 @@ import {
 import { classNames } from '@/utils';
 
 const SearchAddress = () => {
+  const isDesktop = useDesktopMediaQuery();
   const dispatch = useAppDispatch();
   const searchAddress = useSelector(selectSearchAddress);
   const isFetching = useSelector(selectIsFetching);
 
   return (
-    <div className='flex max-w-[500px] items-center gap-3'>
+    <div
+      className={classNames(
+        'flex w-full items-center gap-3',
+        isDesktop && 'max-w-[500px]'
+      )}
+    >
       <div className='shadow-inputFocus bg-back-200 flex flex-1 items-center rounded px-4 py-1'>
         <input
           className={classNames(
@@ -31,12 +39,14 @@ const SearchAddress = () => {
           disabled={isFetching}
           placeholder='Enter An Addresses...'
           value={searchAddress}
-          onChange={(e) => !isFetching && dispatch(setSearchAddress(e.target.value))}
+          onChange={(e) =>
+            !isFetching && dispatch(setSearchAddress(e.target.value))
+          }
         />
       </div>
       <Tooltip
         isTag={true}
-        position='right'
+        position={isDesktop ? 'right' : 'left'}
         content='Enter the wallet address of a trader you wish to copy (optional)'
       >
         <AiOutlineExclamationCircle className='text-text-100' />

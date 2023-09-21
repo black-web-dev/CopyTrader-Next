@@ -30,7 +30,7 @@ const NetworkStatus = (): JSX.Element => {
   }, [dispatch, user]);
 
   return (
-    <div className='flex flex-col items-start gap-3'>
+    <div className='flex w-full flex-col items-start gap-3'>
       <div className='font-bold text-white'>Network Status</div>
       <div className='bg-back-200 relative flex w-full gap-8 rounded p-5'>
         {isFetching && (
@@ -80,7 +80,7 @@ const NetworkStatus = (): JSX.Element => {
                 </div>
                 <div
                   className={classNames(
-                    chainInfoStatus.chain_info.arbPriceChange_24h
+                    chainInfoStatus.chain_info.arbPriceChange_24h > 0
                       ? 'text-[#3AB275]'
                       : 'text-red-600'
                   )}
@@ -97,7 +97,7 @@ const NetworkStatus = (): JSX.Element => {
             )}
           </div>
         </div>
-        <div className='flex flex-col gap-4'>
+        <div className='flex flex-1 flex-col gap-4'>
           <div className='flex items-center justify-between gap-2'>
             <div className='text-text-100 whitespace-nowrap text-sm'>
               Volume

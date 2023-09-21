@@ -107,7 +107,7 @@ const HeadlessUiModal: HeadlessUiModalType<Props> = ({
 
 interface ControlledModalProps {
   isOpen: boolean;
-  onDismiss: () => void;
+  onDismiss?: () => void;
   afterLeave?: () => void;
   children?: React.ReactNode;
   transparent?: boolean;
@@ -125,6 +125,7 @@ const HeadlessUiModalControlled: FC<ControlledModalProps> = ({
   unmount,
 }) => {
   const isDesktop = useDesktopMediaQuery();
+
   return (
     <Transition
       appear
@@ -136,7 +137,7 @@ const HeadlessUiModalControlled: FC<ControlledModalProps> = ({
       <Dialog
         as='div'
         className='fixed inset-0 z-50'
-        onClose={onDismiss}
+        onClose={() => onDismiss && onDismiss()}
         unmount={unmount}
       >
         <div className='relative flex min-h-screen items-center justify-center text-center'>
@@ -185,8 +186,8 @@ const HeadlessUiModalControlled: FC<ControlledModalProps> = ({
                 isDesktop ? MAX_WIDTH_CLASS_MAPPING[maxWidth] : '',
                 isDesktop
                   ? `w-full`
-                  : 'mx-auto max-h-[85vh] w-[85vw] overflow-y-auto',
-                'inline-block transform overflow-hidden p-4 text-left align-bottom'
+                  : 'no-scrollbar mx-auto max-h-[85vh] w-[85vw] overflow-y-auto',
+                'pointer-events-auto inline-block transform overflow-hidden p-4 text-left align-bottom'
               )}
             >
               {children}

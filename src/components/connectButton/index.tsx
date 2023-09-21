@@ -2,9 +2,12 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { CiWallet } from 'react-icons/ci';
 import { useSelector } from 'react-redux';
 
+import useDesktopMediaQuery from '@/hooks/useDesktopMediaQuery';
+
 import { selectUserdata } from '@/services/auth';
 
 const WalletConnect = () => {
+  const isDesktop = useDesktopMediaQuery();
   const user = useSelector(selectUserdata);
 
   return (
@@ -44,7 +47,9 @@ const WalletConnect = () => {
                     className='hover:bg-back-200 flex items-center gap-2 rounded bg-white/10 px-5 py-2.5 text-white transition-all active:scale-95'
                   >
                     <CiWallet className='h-5 w-5 fill-white' />
-                    <div className='text-sm font-normal'>Connect Wallet</div>
+                    <div className='text-sm font-normal capitalize'>
+                      {isDesktop ? 'connect wallet' : 'connect'}
+                    </div>
                   </button>
                 );
               }

@@ -51,7 +51,7 @@ export const filterOpts: FilterOptionType[] = [
     id: 'wallet_amount',
     type: 'select',
     img: <CiWallet />,
-    title: 'Wallet Amount',
+    title: 'Collateral size',
     options: [
       { label: '$100-$1000', value: [100, 1000] },
       { label: '$1000-$5000', value: [1000, 5000] },
@@ -145,7 +145,7 @@ export const closedTableHeader: TableHeader[] = [
     sort: '',
   },
   {
-    label: 'wallet Amount',
+    label: 'Trade Size',
     sort: 'size',
   },
   {
@@ -161,11 +161,11 @@ export const closedTableHeader: TableHeader[] = [
     sort: 'ratio',
   },
   {
-    label: 'Avg.Levarage',
+    label: 'Avg.Lev',
     sort: 'avg_leverage',
   },
   {
-    label: 'Avg.Collateral',
+    label: 'Avg.Col',
     sort: 'avg_coll',
   },
   {

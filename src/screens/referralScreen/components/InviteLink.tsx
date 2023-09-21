@@ -42,10 +42,15 @@ const InviteLink = (): JSX.Element => {
       </div>
       <div className='my-5 flex w-full items-center gap-3'>
         <div className='flex-1 rounded bg-white/10 px-2 py-1.5 text-sm'>
-          {`https://platform.copytrader.gg/account/register?referred=${inviteCode.slice(
-            0,
-            10
-          )}...`}
+          <span className='md:hidden'>
+            {`referred=${inviteCode.slice(0, 15)}...`}
+          </span>
+          <span className='hidden md:block'>
+            {`https://platform.copytrader.gg/account/register?referred=${inviteCode.slice(
+              0,
+              10
+            )}...`}
+          </span>
         </div>
         <button
           className='bg-primary-100 hover:bg-primary-100/50 flex justify-center rounded px-3 py-1.5 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 active:scale-95'

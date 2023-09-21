@@ -230,7 +230,7 @@ const Withdraw = (): JSX.Element => {
 
         {(isCopyTrading || tradeDetail.copyStatus.isCopyTrading) && (
           <div className='text-xs text-red-600'>
-            You can not withdraw from contract. please stop copyTrading on
+            You can not withdraw from contract. please stop Copy Trading on
             contract
           </div>
         )}

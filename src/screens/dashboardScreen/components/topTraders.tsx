@@ -6,6 +6,7 @@ import React, { useEffect } from 'react';
 import { BiLinkExternal } from 'react-icons/bi';
 import { useSelector } from 'react-redux';
 
+import useDesktopMediaQuery from '@/hooks/useDesktopMediaQuery';
 import useNotification from '@/hooks/useNotification';
 
 import Loader from '@/components/common/loader';
@@ -22,6 +23,8 @@ import { shortAddress } from '@/utils';
 
 const TopTraders = (): JSX.Element => {
   const router = useRouter();
+
+  const isDesktop = useDesktopMediaQuery();
   const isFetchingTopTraders = useSelector(selectIsFetchingTopTraders);
   const topTraderStatus = useSelector(selectTopTraderStatus);
 
@@ -36,18 +39,18 @@ const TopTraders = (): JSX.Element => {
   }, [dispatch, user]);
 
   return (
-    <div className='flex flex-col items-start gap-3'>
+    <div className='flex w-full flex-col items-start gap-3'>
       <div className='font-bold text-white'>Top Traders</div>
       <div className='bg-back-200 flex w-full gap-12 rounded p-5'>
         <table className='w-full'>
           <thead>
             <tr className='text-text-100 text-xs'>
               <td className='whitespace-nowrap p-1 text-left'>Address</td>
-              <td className='whitespace-nowrap p-1 text-center'>
+              <td className='whitespace-nowrap p-1 text-right'>
                 Wallet Amount
               </td>
-              <td className='whitespace-nowrap p-1 text-center'>PnL%</td>
-              <td className='whitespace-nowrap p-1 text-center'>Win Rate</td>
+              <td className='whitespace-nowrap p-1 text-right'>PnL%</td>
+              <td className='whitespace-nowrap p-1 text-right'>Win Rate</td>
               <td className='whitespace-nowrap p-1 text-center'></td>
             </tr>
           </thead>
@@ -68,7 +71,7 @@ const TopTraders = (): JSX.Element => {
                       target='_blank'
                     >
                       <div className='flex items-center gap-1'>
-                        {shortAddress(row.account, 3)}
+                        {shortAddress(row.account, isDesktop ? 3 : 5)}
                         <BiLinkExternal />
                       </div>
                     </Link>
