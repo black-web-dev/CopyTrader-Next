@@ -10,7 +10,6 @@ import useNotification from '@/hooks/useNotification';
 
 import Copy from '@/components/common/copy';
 import Loader from '@/components/common/loader';
-import CopyTraderModal from '@/components/copyTradeModal';
 import RcSlider from '@/components/rcSlider';
 
 import { COPY_TRADER_ACCOUNT } from '@/configs';
@@ -28,7 +27,7 @@ import { classNames, shortAddress } from '@/utils';
 const Follow = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const notification = useNotification();
-  const { address, isConnected } = useAccount();
+  const { address } = useAccount();
   const { openConnectModal } = useConnectModal();
   const user = useSelector(selectUserdata);
   const tradeDetail = useSelector(selectTradeDetail);
@@ -234,7 +233,6 @@ const Follow = (): JSX.Element => {
         </div>
         <p className='text-xs'>NOTICE: Set following address and your ratio.</p>
       </div>
-      {address && isConnected && <CopyTraderModal />}
     </>
   );
 };

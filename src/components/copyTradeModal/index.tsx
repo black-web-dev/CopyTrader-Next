@@ -172,7 +172,7 @@ const CopyTraderModal = (): JSX.Element => {
 
   const handleChangeDepositAmount = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const inputValue = new BigNumber(e.target.value);
+      const inputValue = new BigNumber(e.target.value || '0');
       const balance = new BigNumber(accountBalance?.formatted || 0);
 
       if (inputValue.gt(balance)) setDepositAmount(balance);
@@ -234,6 +234,25 @@ const CopyTraderModal = (): JSX.Element => {
   };
 
   useEffect(() => {
+    setCurrentActionIndex(0)
+  }, [isShow])
+
+  useEffect(() => {
+    if (actionsStatus.length) {
+      const current = actionsStatus[currentActionIndex];
+
+      if (current.isActive) {
+        const max = actionsStatus.length - 1;
+        const nextActionIndex = currentActionIndex + 1;
+
+        setCurrentActionIndex(nextActionIndex > max ? max : nextActionIndex);
+      } else {
+        setCurrentActionStatus(actionsStatus[currentActionIndex]);
+      }
+    }
+  }, [actionsStatus, currentActionIndex, isShow]);
+  
+  useEffect(() => {
     const actionsStatus: ActionStatusType[] = actionDetails.map(
       (actionDetail) => {
         let isActive = false;
@@ -275,8 +294,7 @@ const CopyTraderModal = (): JSX.Element => {
             );
             isActive =
               isContractTraderAccount &&
-              ((Number(contractBalance?.formatted) > 0 ? true : false) ||
-                isDepositSuccess);
+              ((Number(contractBalance?.formatted) > 0 ? true : false));
             isLoading = !!isDepositLoading;
             disabled = depositAmount.eq(0);
             onSubmit = depositAction;
@@ -339,6 +357,18 @@ const CopyTraderModal = (): JSX.Element => {
   ]);
 
   useEffect(() => {
+    isSuccessBuildAccount && refetchCopyTraderAccount?.();
+  }, [isSuccessBuildAccount, refetchCopyTraderAccount]);
+
+  useEffect(() => {
+    isDepositSuccess && refetchContractBalance?.();
+  }, [isDepositSuccess, refetchContractBalance]);
+
+  useEffect(() => {
+    isSuccessStartCopyTrading && refetchIsCopyTrading?.();
+  }, [isSuccessStartCopyTrading, refetchIsCopyTrading]);
+
+  useEffect(() => {
     const actionDetail: ActionDetailType[] = [
       {
         id: 'contractAddress',
@@ -371,39 +401,9 @@ const CopyTraderModal = (): JSX.Element => {
     setActionDetails(actionDetail);
   }, []);
 
-  useEffect(() => {
-    if (actionsStatus.length) {
-      const current = actionsStatus[currentActionIndex];
-
-      if (current.isActive) {
-        const max = actionsStatus.length - 1;
-        const nextActionIndex = currentActionIndex + 1;
-
-        setCurrentActionIndex(nextActionIndex > max ? max : nextActionIndex);
-      } else {
-        setCurrentActionStatus(actionsStatus[currentActionIndex]);
-      }
-    }
-  }, [actionsStatus, currentActionIndex]);
-
-  useEffect(() => {
-    isSuccessBuildAccount && refetchCopyTraderAccount?.();
-  }, [isSuccessBuildAccount, refetchCopyTraderAccount]);
-
-  useEffect(() => {
-    isDepositSuccess && refetchContractBalance?.();
-  }, [isDepositSuccess, refetchContractBalance]);
-
-  useEffect(() => {
-    isSuccessStartCopyTrading && refetchIsCopyTrading?.();
-  }, [isSuccessStartCopyTrading, refetchIsCopyTrading]);
-
-  useEffect(() => {
-    setCurrentActionIndex(0);
-  }, [isShow]);
-
   return (
-    <HeadlessUiModal.Controlled isOpen={isShow} maxWidth='md'>
+    <HeadlessUiModal.Controlled isOpen={isShow} maxWidth='md'
+      onDismiss={handleClose}>
       <div className='flex w-full flex-col space-y-6'>
         <HeadlessUiModal.Header
           header='START COPY TRADING'

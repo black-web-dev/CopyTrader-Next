@@ -3,6 +3,7 @@ import React, { ReactNode } from 'react';
 import withAuth from '@/components/common/withAuth';
 import Footer from '@/components/layout/default/footer';
 import Header from '@/components/layout/default/header';
+import CopyTraderModal from '@/components/copyTradeModal';
 
 const Default = ({ children }: { children: ReactNode }): JSX.Element => {
   return (
@@ -11,6 +12,7 @@ const Default = ({ children }: { children: ReactNode }): JSX.Element => {
       <div className='bg-back-100 text-text-200 relative min-h-[calc(100vh_-_64px)]'>
         {children}
       </div>
+      <CopyTraderModal />
       <Footer />
     </>
   );

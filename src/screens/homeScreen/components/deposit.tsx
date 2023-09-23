@@ -77,6 +77,7 @@ const Deposit = (): JSX.Element => {
     value: getGasAmount(depositAmount),
     enabled:
       copyTraderAccount?.toString() !== zeroAddress &&
+      BigNumber(balance?.formatted || '0').gt(depositAmount) &&
       getGasAmount(depositAmount) > 0,
   });
 
@@ -118,8 +119,11 @@ const Deposit = (): JSX.Element => {
   });
 
   const handleMaxAmount = () => {
-    const cAmount = balance?.formatted || '0';
-    setDepositAmount(BigNumber(cAmount));
+    setDepositAmount(BigNumber(balance?.formatted || '0'));
+  };
+
+  const handleChangeAmount = (value: string) => {
+    setDepositAmount(BigNumber(value || '0'));
   };
 
   const handleCreateCopyTraderAccount = useCallback(() => {
@@ -131,6 +135,10 @@ const Deposit = (): JSX.Element => {
       notification('Canceled Metamask.', 'warning');
     });
   }, [depositAction, notification]);
+
+  const availableAmount = BigNumber(balance?.formatted || '0').gte(
+    depositAmount
+  );
 
   return (
     <div className='text-text-100 relative flex h-full w-full flex-col text-sm'>
@@ -210,12 +218,15 @@ const Deposit = (): JSX.Element => {
                     type='number'
                     className='block flex-auto border-0 bg-transparent px-0 py-1.5 text-white focus:outline-0 focus:ring-0 sm:text-sm sm:leading-6'
                     value={depositAmount.toNumber()}
-                    onChange={(e) =>
-                      setDepositAmount(BigNumber(e.target.value))
-                    }
+                    onChange={(e) => handleChangeAmount(e.target.value)}
                   />
                   <div>ETH</div>
                 </div>
+                {!availableAmount && (
+                  <div className='text-xs text-red-600'>
+                    Deposit Amount must be less than balance
+                  </div>
+                )}
               </div>
 
               {resultDeposit && (
@@ -262,7 +273,6 @@ const Deposit = (): JSX.Element => {
               <div className='mt-5'>
                 {isConnected && address ? (
                   <Button
-                    disabled={Number(balance?.value) === 0}
                     loading={isLoadingBuildAccount}
                     onClick={handleCreateCopyTraderAccount}
                   >

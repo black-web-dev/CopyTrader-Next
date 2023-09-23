@@ -108,7 +108,9 @@ const Withdraw = (): JSX.Element => {
   }, [address, notification, withdraw, withdrawAddress, withdrawAmount]);
 
   const handleStopTrade = useCallback(async () => {
-    await stopCopyTradingContract();
+    await stopCopyTradingContract().catch(() => {
+      notification('Canceled Metamask.', 'warning');
+    });
 
     if (tradeDetail.copyStatus.info?.from) {
       dispatch(
@@ -124,7 +126,7 @@ const Withdraw = (): JSX.Element => {
         dispatch(
           getCopyStatusAsync({ user_id: `${user.id}`, wallet: `${address}` })
         );
-      });
+      })
     }
   }, [
     address,
@@ -195,7 +197,9 @@ const Withdraw = (): JSX.Element => {
                   type='number'
                   className='block flex-auto border-0 bg-transparent px-0 py-1.5 text-white focus:outline-0 focus:ring-0 sm:text-sm sm:leading-6'
                   value={withdrawAmount?.toNumber()}
-                  onChange={(e) => setWithdrawAmount(BigNumber(e.target.value))}
+                  onChange={(e) =>
+                    setWithdrawAmount(BigNumber(e.target.value || '0'))
+                  }
                 />
                 <div>ETH</div>
               </div>

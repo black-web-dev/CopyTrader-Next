@@ -107,7 +107,7 @@ const HeadlessUiModal: HeadlessUiModalType<Props> = ({
 
 interface ControlledModalProps {
   isOpen: boolean;
-  onDismiss?: () => void;
+  onDismiss: () => void;
   afterLeave?: () => void;
   children?: React.ReactNode;
   transparent?: boolean;
@@ -137,7 +137,7 @@ const HeadlessUiModalControlled: FC<ControlledModalProps> = ({
       <Dialog
         as='div'
         className='fixed inset-0 z-50'
-        onClose={() => onDismiss && onDismiss()}
+        onClose={onDismiss}
         unmount={unmount}
       >
         <div className='relative flex min-h-screen items-center justify-center text-center'>
