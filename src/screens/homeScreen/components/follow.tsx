@@ -10,6 +10,7 @@ import useNotification from '@/hooks/useNotification';
 
 import Copy from '@/components/common/copy';
 import Loader from '@/components/common/loader';
+import NumericalInput from '@/components/common/numericalInput';
 import RcSlider from '@/components/rcSlider';
 
 import { COPY_TRADER_ACCOUNT } from '@/configs';
@@ -19,6 +20,7 @@ import { setIsShowCopyTradeModal } from '@/services/global';
 import {
   getCopyStatusAsync,
   selectTradeDetail,
+  setCollateralRatio,
   setLeverageRatio,
   stopCopyTraderAsync,
 } from '@/services/trade';
@@ -37,6 +39,12 @@ const Follow = (): JSX.Element => {
     enabled: !!address,
     watch: true,
   });
+
+  const colleateral_size = tradeDetail.collateral_ratio;
+  const leverage_ratio = tradeDetail.copyStatus.isCopyTrading
+    ? tradeDetail.copyStatus.info?.leverage_ratio || 0
+    : tradeDetail.leverage_ratio;
+  const trade_size = colleateral_size * leverage_ratio;
 
   const {
     writeAsync: stopCopyTradingContract,
@@ -138,12 +146,15 @@ const Follow = (): JSX.Element => {
                 {`(USD ${numeral(balance?.formatted).format('0,0.[000]')})`}
               </div>
             </label>
-            <div className='flex items-center rounded bg-white/5 px-3 py-2'>
+            <div className='focus-within:shadow-inputFocus group flex w-full items-center gap-1 rounded bg-white/5 px-3 py-2'>
               <div className='flex flex-auto flex-col gap-1'>
-                <div className='text-text-200 text-xs'>Trade Size</div>
-                <div>{numeral(balance?.formatted).format('0,0.[00000]')}</div>
+                <div className='text-text-200 text-xs'>Collateral Size</div>
+                <NumericalInput
+                  value={tradeDetail.collateral_ratio}
+                  onChange={(value) => dispatch(setCollateralRatio(value))}
+                />
               </div>
-              <div>ETH</div>
+              <div className='text-text-100'>ETH</div>
             </div>
           </div>
           <div className='mb-5 flex flex-col gap-y-10'>
@@ -151,11 +162,7 @@ const Follow = (): JSX.Element => {
               <label>Leverage</label>
               <div className='pr-3'>
                 <RcSlider
-                  value={
-                    tradeDetail.copyStatus.isCopyTrading
-                      ? tradeDetail.copyStatus.info?.leverage_ratio || 0
-                      : tradeDetail.leverage_ratio
-                  }
+                  value={leverage_ratio}
                   disabled={tradeDetail.copyStatus.isCopyTrading}
                   setValue={(value) => dispatch(setLeverageRatio(value))}
                 />
@@ -166,11 +173,19 @@ const Follow = (): JSX.Element => {
           <div className='flex flex-col gap-1 py-2'>
             <div className='flex items-center justify-between text-xs'>
               <div className='capitalize'>collateral</div>
-              <div className='text-text-200'>USD</div>
+              <div className='text-text-200'>
+                ${numeral(colleateral_size).format('0,0.0[0]')}
+              </div>
             </div>
             <div className='flex items-center justify-between'>
               <div className='capitalize'>leverage</div>
-              <div className='text-text-200'>2.0x</div>
+              <div className='text-text-200'>{`${leverage_ratio}x`}</div>
+            </div>
+            <div className='flex items-center justify-between'>
+              <div className='capitalize'>Trade Size</div>
+              <div className='text-text-200'>
+                ${numeral(trade_size).format('0,0.0[0]')}
+              </div>
             </div>
             <div className='flex items-center justify-between'>
               <div className='capitalize'>entry price</div>
@@ -192,9 +207,12 @@ const Follow = (): JSX.Element => {
                 className={classNames(
                   'bg-primary-100 hover:bg-primary-100/50 flex w-full items-center justify-center gap-2 rounded px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 active:scale-95',
                   tradeDetail.copyStatus.isCopyTrading &&
-                    'bg-primary-100/50 text-text-100 cursor-not-allowed'
+                    'bg-primary-100/50 text-text-100 cursor-not-allowed disabled:cursor-not-allowed'
                 )}
-                disabled={tradeDetail.copyStatus.isCopyTrading}
+                disabled={
+                  tradeDetail.copyStatus.isCopyTrading ||
+                  colleateral_size.toString() === '0'
+                }
                 onClick={handleStartTrade}
               >
                 {tradeDetail.isStarting && <Loader />}
@@ -202,7 +220,7 @@ const Follow = (): JSX.Element => {
               </button>
               <button
                 className={classNames(
-                  'flex w-full items-center justify-center gap-2 rounded bg-[#2C96C3] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#2C96C3]/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 active:scale-95',
+                  'flex w-full items-center justify-center gap-2 rounded bg-[#2C96C3] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#2C96C3]/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 active:scale-95 disabled:cursor-not-allowed',
                   !tradeDetail.copyStatus.isCopyTrading &&
                     'text-text-100 cursor-not-allowed bg-[#2C96C3]/50'
                 )}

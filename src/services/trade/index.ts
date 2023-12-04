@@ -62,8 +62,8 @@ const initialState: TradeStore = {
     copyAccount: '',
   },
   leader: '',
-  collateral_ratio: 1,
-  leverage_ratio: 1,
+  collateral_ratio: 0,
+  leverage_ratio: 1.1,
   collateral_limit_eth: '10000000000000000',
 };
 

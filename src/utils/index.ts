@@ -28,6 +28,10 @@ export function bnum(val: string | number | BigNumber | boolean): BigNumber {
   return new BigNumber(number);
 }
 
+export function escapeRegExp(string: string): string {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
+}
+
 export const verifyToken = async (token: string) => {
   try {
     const response = await axios.post(`/api/verifyToken`, {

@@ -2,8 +2,7 @@ import Slider from 'rc-slider';
 import React, { Dispatch } from 'react';
 
 const marks = {
-  0: '',
-  1: <strong>1x</strong>,
+  1.1: <strong>1.1x</strong>,
   5: '5x',
   10: '10x',
   20: '20x',
@@ -31,7 +30,6 @@ const RcSlider = ({ disabled, value, setValue }: RcSliderType) => {
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     const sanitizedValue = newValue.replace(/x/g, '');
-    console.log(sanitizedValue);
     setValue(Number(sanitizedValue));
   };
 
