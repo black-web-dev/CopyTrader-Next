@@ -7,6 +7,10 @@ const useDesktopMediaQuery = () => {
   return useMediaQuery({ query: `(min-width: 800px` });
 };
 
+export const useLaptopMediaQuery = () => {
+  return useMediaQuery({ query: `(min-width: 1080px` });
+};
+
 export const useTouchDeviceMediaQuery = () => {
   return useMediaQuery({ query: `(hover: none) and (pointer: coarse)` });
 };
