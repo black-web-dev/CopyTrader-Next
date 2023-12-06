@@ -5,7 +5,12 @@ import errorHandler from '@/lib/error-handler';
 import { AppStore } from '@/services/index';
 import { bnum } from '@/utils';
 
-import { getChainInfo, getTopTraders, getTransactions } from './dashboard.api';
+import {
+  getChainInfo,
+  getConfigInfo,
+  getTopTraders,
+  getTransactions,
+} from './dashboard.api';
 
 export type ChainInfoStatusType = {
   active: boolean;
@@ -46,11 +51,20 @@ export type TransactionType = {
   transaction_hash: string;
 };
 
+export type ConfigInfoType = {
+  message: string;
+  minSizeUsd: number;
+  minLeverage: number;
+  maxLeverage: number;
+  inviteLimit: number;
+};
+
 export type DashboardStore = {
   isFetching: boolean;
   isFetchingTopTraders: boolean;
   isFetchingTransactions: boolean;
   chainInfoStatus: ChainInfoStatusType;
+  configInfo: ConfigInfoType;
   topTraderStatus: {
     count: number;
     data: TopTraderType[];
@@ -80,6 +94,13 @@ const initialState: DashboardStore = {
       volume24h: 0,
     },
   },
+  configInfo: {
+    message: '',
+    minSizeUsd: 0,
+    minLeverage: 1.1,
+    maxLeverage: 50,
+    inviteLimit: 10,
+  },
   topTraderStatus: {
     count: 0,
     data: [],
@@ -96,6 +117,11 @@ const initialState: DashboardStore = {
 export const getChainInfoAsync = createAsyncThunk(
   'dashabord/getChainInfo',
   errorHandler(getChainInfo)
+);
+
+export const getConfigInfoAsync = createAsyncThunk(
+  'dashabord/getConfigInfo',
+  errorHandler(getConfigInfo)
 );
 
 export const getTopTradersAsync = createAsyncThunk(
@@ -130,6 +156,16 @@ const dashboardSlice = createSlice({
       .addCase(getChainInfoAsync.fulfilled, (state, action) => {
         state.isFetching = false;
         Object.assign(state.chainInfoStatus, action.payload.data);
+      })
+      .addCase(getConfigInfoAsync.pending, (state) => {
+        state.isFetching = true;
+      })
+      .addCase(getConfigInfoAsync.rejected, (state) => {
+        state.isFetching = false;
+      })
+      .addCase(getConfigInfoAsync.fulfilled, (state, action) => {
+        state.isFetching = false;
+        Object.assign(state.configInfo, action.payload.data);
       })
       .addCase(getTopTradersAsync.pending, (state) => {
         state.isFetchingTopTraders = true;
@@ -166,6 +202,9 @@ export const selectIsFetchingTransactions = (state: AppStore) =>
 
 export const selectChainInfoStatus = (state: AppStore) =>
   state.dashboard.chainInfoStatus;
+
+export const selectConfigInfoStatus = (state: AppStore) =>
+  state.dashboard.configInfo;
 
 export const selectTopTraderStatus = (state: AppStore) =>
   state.dashboard.topTraderStatus;

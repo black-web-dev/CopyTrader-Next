@@ -4,6 +4,10 @@ export function getChainInfo({ user_id }: { user_id: string }) {
   return Axios.post('/chain/info', { user_id });
 }
 
+export function getConfigInfo({ user_id }: { user_id: string }) {
+  return Axios.post('/config_info', { user_id });
+}
+
 export function getTopTraders({ user_id }: { user_id: string }) {
   return Axios.post('/positions/closed', {
     user_id,

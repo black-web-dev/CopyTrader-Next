@@ -30,16 +30,16 @@ const RcSlider = ({ disabled, value, setValue }: RcSliderType) => {
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     const sanitizedValue = newValue.replace(/x/g, '');
-    setValue(Number(sanitizedValue));
+    setValue(Math.min(50, Math.max(1.1, Number(sanitizedValue))));
   };
 
   return (
     <div className='flex w-full items-center gap-5'>
       <Slider
-        min={0}
+        min={1.1}
         max={50}
         marks={marks}
-        step={1}
+        step={0.1}
         value={value}
         disabled={disabled}
         onChange={handleChange}

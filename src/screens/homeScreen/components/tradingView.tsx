@@ -41,7 +41,7 @@ export default function TradingViewWidget(): JSX.Element {
         new window.TradingView.widget({
           autosize: false,
           width: '100%',
-          height: 400,
+          height: '100%',
           symbol: currentPair.ticket,
           interval: 'D',
           timezone: 'exchange',

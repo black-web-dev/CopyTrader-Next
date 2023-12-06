@@ -4,7 +4,7 @@ import LocalStorage from '@/hooks/useStorage';
 
 import { AppStore } from '@/services/index';
 
-import { getPairDetail } from './pair.api';
+import { getETHDetail, getPairDetail } from './pair.api';
 
 const PAIR_KEY = 'pair';
 
@@ -49,6 +49,7 @@ export type PairStore = {
   isFetching: boolean;
   currentPair: PairType;
   currentPairDetail: CurrentPairDetail;
+  ethDetail: CurrentPairDetail;
 };
 
 export const initialState: PairStore = {
@@ -61,11 +62,23 @@ export const initialState: PairStore = {
     averagePrice: 0,
     change: 0,
   },
+  ethDetail: {
+    currentPrice: 0,
+    highPrice: 0,
+    lowPrice: 0,
+    averagePrice: 0,
+    change: 0,
+  },
 };
 
 export const getPairDetailAsync = createAsyncThunk(
   'pair/getPairDetail',
   getPairDetail
+);
+
+export const getETHDetailAsync = createAsyncThunk(
+  'pair/getETHDetail',
+  getETHDetail
 );
 
 const pairSlice = createSlice({
@@ -88,6 +101,16 @@ const pairSlice = createSlice({
       .addCase(getPairDetailAsync.fulfilled, (state, action) => {
         state.isFetching = false;
         Object.assign(state.currentPairDetail, action.payload);
+      })
+      .addCase(getETHDetailAsync.pending, (state) => {
+        state.isFetching = true;
+      })
+      .addCase(getETHDetailAsync.rejected, (state) => {
+        state.isFetching = false;
+      })
+      .addCase(getETHDetailAsync.fulfilled, (state, action) => {
+        state.isFetching = false;
+        Object.assign(state.ethDetail, action.payload);
       });
   },
 });
@@ -98,5 +121,7 @@ export const selectCurrentPair = (state: AppStore) => state.pair.currentPair;
 
 export const selectCurrentPairDetail = (state: AppStore) =>
   state.pair.currentPairDetail;
+
+export const selectETHDetail = (state: AppStore) => state.pair.ethDetail;
 
 export default pairSlice.reducer;

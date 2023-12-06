@@ -46,3 +46,13 @@ export async function getPairDetail({ pair }: { pair: PairType }) {
       });
   });
 }
+
+export async function getETHDetail() {
+  return getPairDetail({
+    pair: {
+      label: 'ETH/USD',
+      symbol: 'ETHUSDT',
+      ticket: 'BINANCE:ETHUSD',
+    },
+  });
+}

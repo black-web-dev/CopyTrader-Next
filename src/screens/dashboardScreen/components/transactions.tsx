@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import Loader from '@/components/common/loader';
 import Pagination from '@/components/common/pagination';
 
-import { indexTokens } from '@/screens/homeScreen/components/positions';
+import { indexTokens } from '@/screens/homeScreen/components/positions_old';
 import { useAppDispatch } from '@/services';
 import { selectUserdata } from '@/services/auth';
 import {

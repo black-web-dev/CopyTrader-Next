@@ -26,16 +26,16 @@ export type TradeStore = {
   isStarting: boolean;
   isStoping: boolean;
   copyStatus: {
-    isCopyTrading: boolean;
+    isCopyingOnContract: boolean;
     message: string;
-    info?: CopyStatusInfo;
+    backendInfo?: CopyStatusInfo;
   };
   copyTraderAccount: {
     message: string;
     copyAccount: string;
   };
   leader: string;
-  collateral_ratio: number;
+  collateral_ratio: number | string;
   leverage_ratio: number;
   collateral_limit_eth: string;
 };
@@ -45,9 +45,9 @@ const initialState: TradeStore = {
   isStarting: false,
   isStoping: false,
   copyStatus: {
-    isCopyTrading: false,
+    isCopyingOnContract: false,
     message: '',
-    info: {
+    backendInfo: {
       id: 0,
       from: '',
       to: '',
@@ -62,7 +62,7 @@ const initialState: TradeStore = {
     copyAccount: '',
   },
   leader: '',
-  collateral_ratio: 0,
+  collateral_ratio: '',
   leverage_ratio: 1.1,
   collateral_limit_eth: '10000000000000000',
 };

@@ -15,10 +15,7 @@ import Pagination from '@/components/common/pagination';
 import Tooltip from '@/components/common/tooltip';
 
 import DEATH from '@/assets/images/death.svg';
-import {
-  indexTokens,
-  longShortImgs,
-} from '@/screens/homeScreen/components/positions';
+import { indexTokens, longShortImgs } from '@/screens/homeScreen/components/positions_old';
 import { useAppDispatch } from '@/services';
 import {
   ClosedTrackItemType,

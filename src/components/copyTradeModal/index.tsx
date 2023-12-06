@@ -74,7 +74,7 @@ const CopyTraderModal = (): JSX.Element => {
 
   const { data: accountBalance } = useBalance({
     address: address,
-    enabled: !!address,
+    enabled: !!address && address?.toString() !== zeroAddress,
     watch: true,
   });
 
@@ -91,7 +91,8 @@ const CopyTraderModal = (): JSX.Element => {
   const { data: contractBalance, refetch: refetchContractBalance } = useBalance(
     {
       address: `${copyTraderAccount}` as `0x${string}`,
-      enabled: copyTraderAccount?.toString() !== zeroAddress,
+      enabled:
+        !!copyTraderAccount && copyTraderAccount.toString() !== zeroAddress,
       watch: true,
     }
   );
@@ -101,7 +102,8 @@ const CopyTraderModal = (): JSX.Element => {
       address: `${copyTraderAccount}` as `0x${string}`,
       abi: COPY_TRADER_ACCOUNT.abi,
       functionName: 'isCopyTrading',
-      enabled: copyTraderAccount?.toString() !== zeroAddress,
+      enabled:
+        !!copyTraderAccount && copyTraderAccount.toString() !== zeroAddress,
       watch: true,
     });
 
@@ -194,7 +196,7 @@ const CopyTraderModal = (): JSX.Element => {
           user_id: `${user.id}`,
           wallet: `${address}`,
           leader_address: tradeDetail.leader,
-          collateral_ratio: tradeDetail.collateral_ratio,
+          collateral_ratio: Number(tradeDetail.collateral_ratio),
           leverage_ratio: tradeDetail.leverage_ratio,
         })
       ).then((payload: any) => {
@@ -234,8 +236,8 @@ const CopyTraderModal = (): JSX.Element => {
   };
 
   useEffect(() => {
-    setCurrentActionIndex(0)
-  }, [isShow])
+    setCurrentActionIndex(0);
+  }, [isShow]);
 
   useEffect(() => {
     if (actionsStatus.length) {
@@ -251,7 +253,7 @@ const CopyTraderModal = (): JSX.Element => {
       }
     }
   }, [actionsStatus, currentActionIndex, isShow]);
-  
+
   useEffect(() => {
     const actionsStatus: ActionStatusType[] = actionDetails.map(
       (actionDetail) => {
@@ -294,7 +296,7 @@ const CopyTraderModal = (): JSX.Element => {
             );
             isActive =
               isContractTraderAccount &&
-              ((Number(contractBalance?.formatted) > 0 ? true : false));
+              (Number(contractBalance?.formatted) > 0 ? true : false);
             isLoading = !!isDepositLoading;
             disabled = depositAmount.eq(0);
             onSubmit = depositAction;
@@ -311,12 +313,12 @@ const CopyTraderModal = (): JSX.Element => {
             onSubmit = startCopyTradingContract;
             break;
           case 'isCopyTradingBackend':
-            value = tradeDetail.copyStatus.isCopyTrading ? (
+            value = tradeDetail.copyStatus.isCopyingOnContract ? (
               <AiOutlineCheckCircle className='h-5 w-5 text-green-600' />
             ) : (
               <></>
             );
-            isActive = !!tradeDetail.copyStatus.isCopyTrading;
+            isActive = !!tradeDetail.copyStatus.isCopyingOnContract;
             isLoading = !!tradeDetail.isStarting;
             disabled = !tradeDetail.leader;
             onSubmit = startCopyTrading;
@@ -402,8 +404,11 @@ const CopyTraderModal = (): JSX.Element => {
   }, []);
 
   return (
-    <HeadlessUiModal.Controlled isOpen={isShow} maxWidth='md'
-      onDismiss={handleClose}>
+    <HeadlessUiModal.Controlled
+      isOpen={isShow}
+      maxWidth='md'
+      onDismiss={handleClose}
+    >
       <div className='flex w-full flex-col space-y-6'>
         <HeadlessUiModal.Header
           header='START COPY TRADING'

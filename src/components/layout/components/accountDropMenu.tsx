@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { AiOutlineKey } from 'react-icons/ai';
 import { BiLogIn, BiLogOut } from 'react-icons/bi';
-import { BsThreeDotsVertical } from 'react-icons/bs';
+import { BsExclamationCircle, BsThreeDotsVertical } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
 import { useNetwork, useSwitchNetwork } from 'wagmi';
 
@@ -30,14 +30,14 @@ const AccountDropMenu = (): JSX.Element => {
   const IconUrl = chains.find((_chain) => _chain.id === chain?.id)?.iconUrl;
 
   return (
-    <div className='gap flex items-center'>
+    <div className='flex items-center gap-2'>
       <WalletConnect />
       <Menu as='div' className='relative ml-3'>
         <div>
           <Menu.Button className='hover:bg-back-200 flex items-center rounded bg-white/10 p-2 text-sm hover:outline-none'>
             <span className='sr-only'>Open user menu</span>
             <div className='bg-back-300 relative flex h-6 w-6 items-center justify-center overflow-hidden rounded-full'>
-              {chain && IconUrl && <IconUrl />}
+              {chain && IconUrl ? <IconUrl /> : <BsExclamationCircle className='text-white' />}
             </div>
             <div className='border-border-200 ml-2 border-l pl-1'>
               <BsThreeDotsVertical className='text-text-100' />

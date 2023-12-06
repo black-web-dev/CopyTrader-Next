@@ -48,6 +48,7 @@ function Base<P>({
             appName: 'Copy Trader',
             learnMoreUrl: '',
           }}
+          initialChain={42161}
           chains={chains}
           showRecentTransactions={true}
           theme={darkTheme({

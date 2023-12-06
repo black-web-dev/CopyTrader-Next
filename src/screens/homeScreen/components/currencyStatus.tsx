@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 
 import { useAppDispatch } from '@/services';
 import {
+  getETHDetailAsync,
   getPairDetailAsync,
   pairs,
   seCurrentPair,
@@ -22,9 +23,11 @@ const CurrencyList = (): JSX.Element => {
 
   useEffect(() => {
     dispatch(getPairDetailAsync({ pair: currentPair }));
+    dispatch(getETHDetailAsync());
 
     const time = setInterval(() => {
       dispatch(getPairDetailAsync({ pair: currentPair }));
+      dispatch(getETHDetailAsync());
     }, TIME_INTERVAL * 1000);
     return () => {
       clearInterval(time);

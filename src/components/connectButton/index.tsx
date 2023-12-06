@@ -1,14 +1,48 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import React, { useCallback, useEffect, useState } from 'react';
+import { BsExclamationTriangle } from 'react-icons/bs';
 import { CiWallet } from 'react-icons/ci';
 import { useSelector } from 'react-redux';
+import { useNetwork, useSwitchNetwork } from 'wagmi';
 
 import useDesktopMediaQuery from '@/hooks/useDesktopMediaQuery';
 
+import { arbitrum } from '@/configs/wagmiConfig';
 import { selectUserdata } from '@/services/auth';
 
 const WalletConnect = () => {
   const isDesktop = useDesktopMediaQuery();
   const user = useSelector(selectUserdata);
+
+  const { chain } = useNetwork();
+  const {
+    isLoading,
+    pendingChainId,
+    switchNetworkAsync: switchNetwork,
+  } = useSwitchNetwork({
+    chainId: arbitrum.id,
+  });
+
+  const handleSwitchChain = useCallback(
+    async (id: number) => {
+      try {
+        await switchNetwork?.(id);
+        // eslint-disable-next-line no-empty
+      } catch (error) {}
+    },
+    [switchNetwork]
+  );
+
+  useEffect(() => {
+    if (
+      chain &&
+      chain.unsupported &&
+      pendingChainId !== arbitrum.id &&
+      !isLoading
+    ) {
+      handleSwitchChain(arbitrum.id);
+    }
+  }, [chain, handleSwitchChain, isLoading, pendingChainId]);
 
   return (
     <ConnectButton.Custom>
@@ -55,8 +89,17 @@ const WalletConnect = () => {
               }
               if (chain.unsupported) {
                 return (
-                  <button onClick={openChainModal} type='button'>
-                    Wrong network
+                  <button
+                    className='text-text-100 flex items-center gap-1 text-xs'
+                    onClick={openChainModal}
+                    type='button'
+                  >
+                    <BsExclamationTriangle />
+                    <div>
+                      {isLoading && pendingChainId
+                        ? 'Switching'
+                        : 'Wrong network'}
+                    </div>
                   </button>
                 );
               }

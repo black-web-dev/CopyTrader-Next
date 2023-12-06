@@ -7,6 +7,15 @@ import { bnum } from '@/utils';
 
 import { closePosition, getPositions } from './position.api';
 
+export type FollowDetailType = {
+  address: string;
+  status: number;
+  currentValue: number;
+  pnl: number;
+  dsa: string;
+  positions: PositionType[];
+};
+
 export type PositionType = {
   indextoken: string;
   islong: boolean;
@@ -134,6 +143,7 @@ export const selectPositionData = (state: AppStore) => {
 
   return {
     count,
+    account: state.position.positions.account,
     list: sorted.slice(start, end),
   };
 };

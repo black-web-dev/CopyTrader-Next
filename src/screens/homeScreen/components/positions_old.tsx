@@ -17,6 +17,7 @@ import Tooltip from '@/components/common/tooltip';
 
 import Bear from '@/assets/images/bear.svg';
 import Bull from '@/assets/images/bull.svg';
+import NotFound from '@/assets/images/not-found.svg';
 import LINK from '@/assets/tokens/link.svg';
 import UNI from '@/assets/tokens/uni.svg';
 import WBTC from '@/assets/tokens/wbtc.svg';
@@ -213,8 +214,9 @@ const Table = ({
           {!isFetching && data.length === 0 && (
             <tr>
               <td colSpan={7}>
-                <div className='flex min-h-[100px] items-center justify-center'>
-                  No items
+                <div className='flex min-h-[100px] flex-col items-center justify-center'>
+                  <NotFound className='h-[60px] w-[60px]' />
+                  <div className='text-text-100'>No open positions</div>
                 </div>
               </td>
             </tr>
@@ -381,7 +383,7 @@ const ExpandRow = ({ data, index }: { data: PositionType; index: number }) => {
                     onClick={() => onClosePosition()}
                     loading={isLoadingStartCopyTrading}
                     disabled={
-                      tradeDetail.copyStatus.isCopyTrading ||
+                      tradeDetail.copyStatus.isCopyingOnContract ||
                       isSuccessStartCopyTrading
                     }
                   >

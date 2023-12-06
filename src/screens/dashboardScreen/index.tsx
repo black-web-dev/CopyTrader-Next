@@ -13,7 +13,7 @@ const DashboardScreen = () => {
         <SearchInput />
       </div>
       <div className='mt-[34px] flex w-full flex-col gap-10 xl:flex-row'>
-        <div className='flex w-full flex-col lg:flex-row xl:flex-col gap-7 xl:max-w-[600px]'>
+        <div className='flex w-full flex-col gap-7 lg:flex-row xl:max-w-[600px] xl:flex-col'>
           <NetworkStatus />
           <TopTraders />
         </div>

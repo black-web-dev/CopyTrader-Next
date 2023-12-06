@@ -112,12 +112,12 @@ const Withdraw = (): JSX.Element => {
       notification('Canceled Metamask.', 'warning');
     });
 
-    if (tradeDetail.copyStatus.info?.from) {
+    if (tradeDetail.copyStatus.backendInfo?.from) {
       dispatch(
         stopCopyTraderAsync({
           user_id: `${user.id}`,
           wallet: `${address}`,
-          leader_address: tradeDetail.copyStatus.info?.from,
+          leader_address: tradeDetail.copyStatus.backendInfo?.from,
         })
       ).then((payload: any) => {
         if (payload?.error) return;
@@ -126,14 +126,14 @@ const Withdraw = (): JSX.Element => {
         dispatch(
           getCopyStatusAsync({ user_id: `${user.id}`, wallet: `${address}` })
         );
-      })
+      });
     }
   }, [
     address,
     dispatch,
     notification,
     stopCopyTradingContract,
-    tradeDetail.copyStatus.info?.from,
+    tradeDetail.copyStatus.backendInfo?.from,
     user.id,
   ]);
 
@@ -232,14 +232,14 @@ const Withdraw = (): JSX.Element => {
           </div>
         )}
 
-        {(isCopyTrading || tradeDetail.copyStatus.isCopyTrading) && (
+        {(isCopyTrading || tradeDetail.copyStatus.isCopyingOnContract) && (
           <div className='text-xs text-red-600'>
             You can not withdraw from contract. please stop Copy Trading on
             contract
           </div>
         )}
 
-        {(isCopyTrading || tradeDetail.copyStatus.isCopyTrading) && (
+        {(isCopyTrading || tradeDetail.copyStatus.isCopyingOnContract) && (
           <button
             className={classNames(
               'flex w-full items-center justify-center gap-2 rounded bg-[#2C96C3] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#2C96C3]/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 active:scale-95'
@@ -256,7 +256,7 @@ const Withdraw = (): JSX.Element => {
             <Button
               disabled={
                 !!isCopyTrading ||
-                tradeDetail.copyStatus.isCopyTrading ||
+                tradeDetail.copyStatus.isCopyingOnContract ||
                 withdrawAmount.toNumber() === 0 ||
                 Number(contractBalance?.value) === 0 ||
                 Number(contractBalance?.formatted) < withdrawAmount.toNumber()

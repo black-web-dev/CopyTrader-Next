@@ -1,9 +1,9 @@
 import React, { ReactNode } from 'react';
 
 import withAuth from '@/components/common/withAuth';
+import CopyTraderModal from '@/components/copyTradeModal';
 import Footer from '@/components/layout/default/footer';
 import Header from '@/components/layout/default/header';
-import CopyTraderModal from '@/components/copyTradeModal';
 
 const Default = ({ children }: { children: ReactNode }): JSX.Element => {
   return (

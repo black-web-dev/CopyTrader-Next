@@ -41,6 +41,7 @@ const Deposit = (): JSX.Element => {
 
   const { data: balance } = useBalance({
     address: address,
+    enabled: !!address && address.toString() !== zeroAddress,
     watch: true,
   });
 

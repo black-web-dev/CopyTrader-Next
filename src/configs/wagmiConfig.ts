@@ -2,7 +2,7 @@ import { getDefaultWallets } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 
-const arbitrum = {
+export const arbitrum = {
   id: 42161,
   name: 'Arbitrum One',
   network: 'arbitrum',
@@ -49,7 +49,7 @@ export const { chains, publicClient } = configureChains(
 
 const { connectors } = getDefaultWallets({
   appName: 'My RainbowKit App',
-  projectId: 'YOUR_PROJECT_ID',
+  projectId: 'dbdfb35612fc3a2b79fa04674495d5de',
   chains,
 });
 
